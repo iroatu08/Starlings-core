@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 29% 97%;
+    --foreground: 222 44% 19%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 44% 19%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 44% 19%;
+    --primary: 222 44% 19%;
+    --primary-foreground: 40 29% 97%;
+    --secondary: 42 63% 47%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 40 20% 94%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 42 63% 47%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 15% 88%;
+    --input: 40 15% 88%;
+    --ring: 42 63% 47%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222 44% 8%;
+    --foreground: 40 29% 97%;
+    --card: 222 44% 12%;
+    --card-foreground: 40 29% 97%;
+    --popover: 222 44% 12%;
+    --popover-foreground: 40 29% 97%;
+    --primary: 42 63% 47%;
+    --primary-foreground: 222 44% 10%;
+    --secondary: 222 44% 19%;
+    --secondary-foreground: 40 29% 97%;
+    --muted: 222 44% 15%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 222 44% 19%;
+    --accent-foreground: 40 29% 97%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 222 44% 19%;
+    --input: 222 44% 19%;
+    --ring: 42 63% 47%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-off-white text-navy font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f8f6f2;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c49a2d;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a07d22;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gold text-white px-6 py-3 rounded-lg font-semibold text-sm
+           hover:bg-gold-600 active:bg-gold-700 transition-all duration-200
+           shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-outline {
+    @apply border-2 border-gold text-gold px-6 py-3 rounded-lg font-semibold text-sm
+           hover:bg-gold hover:text-white transition-all duration-200;
+  }
+
+  .btn-navy {
+    @apply bg-navy text-white px-6 py-3 rounded-lg font-semibold text-sm
+           hover:bg-navy-600 transition-all duration-200 shadow-md hover:shadow-lg;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .section-padding {
+    @apply py-16 md:py-24 px-4;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .gradient-navy {
+    background: linear-gradient(135deg, #1B2A4A 0%, #2d4a7a 100%);
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, #C49A2D 0%, #e6b84a 100%);
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #C49A2D, #e6b84a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .glass-dark {
+    background: rgba(27, 42, 74, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(196, 154, 45, 0.2);
+  }
+
+  .hero-gradient {
+    background: linear-gradient(to bottom, rgba(27,42,74,0) 0%, rgba(27,42,74,0.7) 60%, rgba(27,42,74,0.95) 100%);
+  }
+
+  .shimmer-bg {
+    background: linear-gradient(90deg, #f8f6f2 25%, #ede9e1 50%, #f8f6f2 75%);
+    background-size: 200% 100%;
+    animation: shimmer 2s linear infinite;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-border bg-white text-navy
+           focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent
+           placeholder:text-slate/60 transition-all duration-200;
+  }
+
+  .label-field {
+    @apply block text-sm font-medium text-navy mb-1.5;
+  }
+}
