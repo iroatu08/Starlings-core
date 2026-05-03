@@ -5,6 +5,7 @@ const typeorm_1 = require("typeorm");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const path_1 = require("path");
+const pg_ssl_util_1 = require("../../config/pg-ssl.util");
 dotenv.config({ path: (0, path_1.resolve)(__dirname, '../../../.env') });
 const user_entity_1 = require("../../users/entities/user.entity");
 const destination_entity_1 = require("../../destinations/entities/destination.entity");
@@ -129,7 +130,11 @@ const AppDataSource = new typeorm_1.DataSource({
     type: 'postgres',
     url: process.env.DATABASE_URL,
     synchronize: true,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: (0, pg_ssl_util_1.resolvePostgresSsl)({
+        databaseUrl: process.env.DATABASE_URL,
+        nodeEnv: process.env.NODE_ENV,
+        dbSsl: process.env.DB_SSL,
+    }),
     entities: [user_entity_1.User, destination_entity_1.Destination, package_entity_1.Package, gallery_entity_1.GalleryImage, destination_review_entity_1.DestinationReview, cart_entity_1.Cart, cart_item_entity_1.CartItem, booking_entity_1.Booking, booking_item_entity_1.BookingItem, payment_entity_1.Payment],
 });
 async function seed() {

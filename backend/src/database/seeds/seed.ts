@@ -4,6 +4,8 @@ import * as bcrypt from 'bcrypt';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 
+import { resolvePostgresSsl } from '../../config/pg-ssl.util';
+
 dotenv.config({ path: resolve(__dirname, '../../../.env') });
 
 import { User, UserRole } from '../../users/entities/user.entity';
@@ -154,7 +156,11 @@ const AppDataSource = new DataSource({
   type: 'postgres',
   url: process.env.DATABASE_URL,
   synchronize: true,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: resolvePostgresSsl({
+    databaseUrl: process.env.DATABASE_URL,
+    nodeEnv: process.env.NODE_ENV,
+    dbSsl: process.env.DB_SSL,
+  }),
   entities: [User, Destination, Package, GalleryImage, DestinationReview, Cart, CartItem, Booking, BookingItem, Payment],
 });
 

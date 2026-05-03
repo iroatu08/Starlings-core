@@ -14,6 +14,7 @@ import { GalleryImage } from '../gallery/entities/gallery.entity';
 import { ContactSubmission } from '../contact/entities/contact-submission.entity';
 import { NewsletterSubscriber } from '../newsletter/entities/newsletter-subscriber.entity';
 import { DestinationReview } from '../reviews/entities/destination-review.entity';
+import { resolvePostgresSsl } from './pg-ssl.util';
 
 export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',
@@ -36,7 +37,9 @@ export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOp
   ],
   synchronize: configService.get<string>('NODE_ENV') === 'development',
   logging: configService.get<string>('NODE_ENV') === 'development',
-  ssl: configService.get<string>('NODE_ENV') === 'production'
-    ? { rejectUnauthorized: false }
-    : false,
+  ssl: resolvePostgresSsl({
+    databaseUrl: configService.get<string>('DATABASE_URL'),
+    nodeEnv: configService.get<string>('NODE_ENV'),
+    dbSsl: configService.get<string>('DB_SSL'),
+  }),
 });

@@ -15,6 +15,7 @@ const gallery_entity_1 = require("../gallery/entities/gallery.entity");
 const contact_submission_entity_1 = require("../contact/entities/contact-submission.entity");
 const newsletter_subscriber_entity_1 = require("../newsletter/entities/newsletter-subscriber.entity");
 const destination_review_entity_1 = require("../reviews/entities/destination-review.entity");
+const pg_ssl_util_1 = require("./pg-ssl.util");
 const getDatabaseConfig = (configService) => ({
     type: 'postgres',
     url: configService.get('DATABASE_URL'),
@@ -36,9 +37,11 @@ const getDatabaseConfig = (configService) => ({
     ],
     synchronize: configService.get('NODE_ENV') === 'development',
     logging: configService.get('NODE_ENV') === 'development',
-    ssl: configService.get('NODE_ENV') === 'production'
-        ? { rejectUnauthorized: false }
-        : false,
+    ssl: (0, pg_ssl_util_1.resolvePostgresSsl)({
+        databaseUrl: configService.get('DATABASE_URL'),
+        nodeEnv: configService.get('NODE_ENV'),
+        dbSsl: configService.get('DB_SSL'),
+    }),
 });
 exports.getDatabaseConfig = getDatabaseConfig;
 //# sourceMappingURL=database.config.js.map

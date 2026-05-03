@@ -18,6 +18,7 @@ const gallery_entity_1 = require("./gallery/entities/gallery.entity");
 const contact_submission_entity_1 = require("./contact/entities/contact-submission.entity");
 const newsletter_subscriber_entity_1 = require("./newsletter/entities/newsletter-subscriber.entity");
 const destination_review_entity_1 = require("./reviews/entities/destination-review.entity");
+const pg_ssl_util_1 = require("./config/pg-ssl.util");
 (0, dotenv_1.config)({ path: (0, path_1.resolve)(__dirname, '../.env') });
 const migrationExtension = __filename.endsWith('.ts') ? 'ts' : 'js';
 const AppDataSource = new typeorm_1.DataSource({
@@ -42,9 +43,11 @@ const AppDataSource = new typeorm_1.DataSource({
     migrations: [(0, path_1.join)(__dirname, 'database', 'migrations', `*.${migrationExtension}`)],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',
-    ssl: process.env.NODE_ENV === 'production'
-        ? { rejectUnauthorized: false }
-        : false,
+    ssl: (0, pg_ssl_util_1.resolvePostgresSsl)({
+        databaseUrl: process.env.DATABASE_URL,
+        nodeEnv: process.env.NODE_ENV,
+        dbSsl: process.env.DB_SSL,
+    }),
 });
 exports.default = AppDataSource;
 //# sourceMappingURL=data-source.js.map

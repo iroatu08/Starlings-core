@@ -16,6 +16,7 @@ import { GalleryImage } from './gallery/entities/gallery.entity';
 import { ContactSubmission } from './contact/entities/contact-submission.entity';
 import { NewsletterSubscriber } from './newsletter/entities/newsletter-subscriber.entity';
 import { DestinationReview } from './reviews/entities/destination-review.entity';
+import { resolvePostgresSsl } from './config/pg-ssl.util';
 
 config({ path: resolve(__dirname, '../.env') });
 
@@ -43,10 +44,11 @@ const AppDataSource = new DataSource({
   migrations: [join(__dirname, 'database', 'migrations', `*.${migrationExtension}`)],
   synchronize: false,
   logging: process.env.NODE_ENV === 'development',
-  ssl:
-    process.env.NODE_ENV === 'production'
-      ? { rejectUnauthorized: false }
-      : false,
+  ssl: resolvePostgresSsl({
+    databaseUrl: process.env.DATABASE_URL,
+    nodeEnv: process.env.NODE_ENV,
+    dbSsl: process.env.DB_SSL,
+  }),
 });
 
 export default AppDataSource;
