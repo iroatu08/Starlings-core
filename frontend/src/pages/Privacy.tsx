@@ -137,10 +137,9 @@ const SECTIONS: { id: string; title: string; body: ReactNode }[] = [
     body: (
       <p>
         Questions about privacy or this policy:{' '}
-        <a href="mailto:concierge@starlings.ae" className="text-gold font-semibold underline underline-offset-2 hover:text-gold-600">
-          concierge@starlings.ae
+        <a href="mailto:info@starlingshsp.com" className="text-gold font-semibold underline underline-offset-2 hover:text-gold-600">
+          info@starlingshsp.com
         </a>
-        , or write to us at our business address shown on the Contact page.
       </p>
     ),
   },

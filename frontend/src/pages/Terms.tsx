@@ -77,10 +77,9 @@ const SECTIONS: { id: string; title: string; body: ReactNode }[] = [
     body: (
       <p>
         Questions about these Terms:{' '}
-        <a href="mailto:concierge@starlings.ae" className="text-gold font-semibold underline underline-offset-2 hover:text-gold-600">
-          concierge@starlings.ae
+        <a href="mailto:info@starlingshsp.com" className="text-gold font-semibold underline underline-offset-2 hover:text-gold-600">
+          info@starlingshsp.com
         </a>
-        .
       </p>
     ),
   },

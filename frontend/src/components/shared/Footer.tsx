@@ -1,6 +1,15 @@
 import { Link } from 'react-router-dom'
-import { Globe2, Languages, Share2 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import { Facebook, Instagram, Linkedin, Youtube } from 'lucide-react'
 import { Logo } from '../../images'
+
+/** Public profile URLs — update to your real handles. */
+const socialLinks: ReadonlyArray<{ href: string; label: string; Icon: LucideIcon }> = [
+  { href: 'https://www.instagram.com/', label: 'Starlings on Instagram', Icon: Instagram },
+  { href: 'https://www.facebook.com/', label: 'Starlings on Facebook', Icon: Facebook },
+  { href: 'https://www.linkedin.com/', label: 'Starlings on LinkedIn', Icon: Linkedin },
+  { href: 'https://www.youtube.com/', label: 'Starlings on YouTube', Icon: Youtube },
+]
 
 const exploreLinks = [
   { label: 'Destinations', href: '/destinations' },
@@ -65,10 +74,10 @@ export function Footer() {
           <div>
             <h2 className="mb-6 font-display text-xl text-white">Contact</h2>
             <ul className="space-y-4 font-sans text-sm tracking-wide text-stone-400">
-              <li>Sheikh Zayed Road, Dubai, UAE</li>
+              <li>Block 4 Flat 3 Kings court II estate Willie Desanya street Abesan Lagos</li>
               <li>
                 <a href="mailto:concierge@starlings.ae" className="transition-colors hover:text-white">
-                  concierge@starlings.ae
+                info@starlingshsp.com
                 </a>
               </li>
               <li>
@@ -84,26 +93,20 @@ export function Footer() {
           <p className="text-center font-sans text-sm tracking-wide text-stone-400 md:text-left">
             © {year} Starlings Hospitality Dubai. All rights reserved.
           </p>
-          <div className="flex items-center gap-8 text-white">
-            <Languages
-              size={22}
-              strokeWidth={1.5}
-              className="cursor-pointer transition-colors hover:text-amber-400"
-              aria-hidden
-            />
-            <Globe2
-              size={22}
-              strokeWidth={1.5}
-              className="cursor-pointer transition-colors hover:text-amber-400"
-              aria-hidden
-            />
-            <Share2
-              size={22}
-              strokeWidth={1.5}
-              className="cursor-pointer transition-colors hover:text-amber-400"
-              aria-hidden
-            />
-          </div>
+          <nav aria-label="Social media" className="flex items-center gap-6 text-white md:gap-8">
+            {socialLinks.map(({ href, label, Icon }) => (
+              <a
+                key={href}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-amber-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-400"
+                aria-label={label}
+              >
+                <Icon size={22} strokeWidth={1.5} aria-hidden />
+              </a>
+            ))}
+          </nav>
         </div>
       </div>
     </footer>
