@@ -17,7 +17,9 @@ import { Cart } from '../../cart/entities/cart.entity';
 import { CartItem } from '../../cart/entities/cart-item.entity';
 import { Booking } from '../../bookings/entities/booking.entity';
 import { BookingItem } from '../../bookings/entities/booking-item.entity';
+import { BookingTraveler } from '../../bookings/entities/booking-traveler.entity';
 import { Payment } from '../../payments/entities/payment.entity';
+import { RefundRequest } from '../../payments/entities/refund-request.entity';
 
 interface SeedPackage {
   name: string;
@@ -161,7 +163,20 @@ const AppDataSource = new DataSource({
     nodeEnv: process.env.NODE_ENV,
     dbSsl: process.env.DB_SSL,
   }),
-  entities: [User, Destination, Package, GalleryImage, DestinationReview, Cart, CartItem, Booking, BookingItem, Payment],
+  entities: [
+    User,
+    Destination,
+    Package,
+    GalleryImage,
+    DestinationReview,
+    Cart,
+    CartItem,
+    Booking,
+    BookingItem,
+    BookingTraveler,
+    Payment,
+    RefundRequest,
+  ],
 });
 
 
@@ -185,6 +200,8 @@ async function seed() {
     await AppDataSource.query(`
       TRUNCATE TABLE
         "payments",
+        "refund_requests",
+        "booking_travelers",
         "booking_items",
         "bookings",
         "cart_items",
@@ -319,7 +336,9 @@ async function seed() {
   } catch (err) {
     console.error('❌ Seed failed:', err);
   } finally {
-    await AppDataSource.destroy();
+    if (AppDataSource.isInitialized) {
+      await AppDataSource.destroy();
+    }
   }
 }
 

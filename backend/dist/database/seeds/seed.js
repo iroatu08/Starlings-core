@@ -16,7 +16,9 @@ const cart_entity_1 = require("../../cart/entities/cart.entity");
 const cart_item_entity_1 = require("../../cart/entities/cart-item.entity");
 const booking_entity_1 = require("../../bookings/entities/booking.entity");
 const booking_item_entity_1 = require("../../bookings/entities/booking-item.entity");
+const booking_traveler_entity_1 = require("../../bookings/entities/booking-traveler.entity");
 const payment_entity_1 = require("../../payments/entities/payment.entity");
+const refund_request_entity_1 = require("../../payments/entities/refund-request.entity");
 const DESTINATION_SEEDS = [
     {
         name: 'Dubai Signature Escape',
@@ -135,7 +137,20 @@ const AppDataSource = new typeorm_1.DataSource({
         nodeEnv: process.env.NODE_ENV,
         dbSsl: process.env.DB_SSL,
     }),
-    entities: [user_entity_1.User, destination_entity_1.Destination, package_entity_1.Package, gallery_entity_1.GalleryImage, destination_review_entity_1.DestinationReview, cart_entity_1.Cart, cart_item_entity_1.CartItem, booking_entity_1.Booking, booking_item_entity_1.BookingItem, payment_entity_1.Payment],
+    entities: [
+        user_entity_1.User,
+        destination_entity_1.Destination,
+        package_entity_1.Package,
+        gallery_entity_1.GalleryImage,
+        destination_review_entity_1.DestinationReview,
+        cart_entity_1.Cart,
+        cart_item_entity_1.CartItem,
+        booking_entity_1.Booking,
+        booking_item_entity_1.BookingItem,
+        booking_traveler_entity_1.BookingTraveler,
+        payment_entity_1.Payment,
+        refund_request_entity_1.RefundRequest,
+    ],
 });
 async function seed() {
     try {
@@ -154,6 +169,8 @@ async function seed() {
         await AppDataSource.query(`
       TRUNCATE TABLE
         "payments",
+        "refund_requests",
+        "booking_travelers",
         "booking_items",
         "bookings",
         "cart_items",
@@ -280,7 +297,9 @@ async function seed() {
         console.error('❌ Seed failed:', err);
     }
     finally {
-        await AppDataSource.destroy();
+        if (AppDataSource.isInitialized) {
+            await AppDataSource.destroy();
+        }
     }
 }
 seed();

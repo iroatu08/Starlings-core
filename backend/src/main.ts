@@ -6,17 +6,7 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
-
-/** Vite often bumps port (5173 → 5174) when the default is taken; allow both in non-production. */
-function corsOrigin(): string | string[] {
-  const primary = process.env.FRONTEND_URL?.trim() || 'http://localhost:5173';
-  if (process.env.NODE_ENV === 'production') {
-    return primary;
-  }
-  const commonLocal = ['http://localhost:5173', 'http://localhost:5174'];
-  const merged = [...new Set([primary, ...commonLocal])];
-  return merged.length === 1 ? merged[0] : merged;
-}
+import { resolveCorsOrigins } from './config/cors-origins.util';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,9 +15,13 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser());
 
-  // CORS
+  // CORS — set ALLOWED_ORIGINS on Render to allow Vercel + local Vite (comma-separated).
   app.enableCors({
-    origin: corsOrigin(),
+    origin: resolveCorsOrigins({
+      allowedOriginsRaw: process.env.ALLOWED_ORIGINS,
+      frontendUrl: process.env.FRONTEND_URL,
+      nodeEnv: process.env.NODE_ENV,
+    }),
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

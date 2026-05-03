@@ -8,21 +8,17 @@ const helmet_1 = require("helmet");
 const app_module_1 = require("./app.module");
 const http_exception_filter_1 = require("./common/filters/http-exception.filter");
 const transform_interceptor_1 = require("./common/interceptors/transform.interceptor");
-function corsOrigin() {
-    const primary = process.env.FRONTEND_URL?.trim() || 'http://localhost:5173';
-    if (process.env.NODE_ENV === 'production') {
-        return primary;
-    }
-    const commonLocal = ['http://localhost:5173', 'http://localhost:5174'];
-    const merged = [...new Set([primary, ...commonLocal])];
-    return merged.length === 1 ? merged[0] : merged;
-}
+const cors_origins_util_1 = require("./config/cors-origins.util");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.use((0, helmet_1.default)());
     app.use(cookieParser());
     app.enableCors({
-        origin: corsOrigin(),
+        origin: (0, cors_origins_util_1.resolveCorsOrigins)({
+            allowedOriginsRaw: process.env.ALLOWED_ORIGINS,
+            frontendUrl: process.env.FRONTEND_URL,
+            nodeEnv: process.env.NODE_ENV,
+        }),
         credentials: true,
         methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
