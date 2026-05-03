@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { cartApi } from '../../api/cart.api'
+import type { AddCartItemPayload, UpdateCartItemPayload } from '../../api/cart.api'
 import { useCartStore } from '../../stores/cartStore'
 import { useAuthStore } from '../../stores/authStore'
 import { useEffect } from 'react'
@@ -20,8 +21,8 @@ export function useCart() {
   }, [cartData, setItems])
 
   const addItemMutation = useMutation({
-    mutationFn: ({ packageId, quantity }: { packageId: string; quantity?: number }) =>
-      cartApi.addItem(packageId, quantity),
+    mutationFn: (payload: AddCartItemPayload) =>
+      cartApi.addItem(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] })
       openDrawer()
@@ -29,8 +30,8 @@ export function useCart() {
   })
 
   const updateItemMutation = useMutation({
-    mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) =>
-      cartApi.updateItem(itemId, quantity),
+    mutationFn: ({ itemId, ...payload }: { itemId: string } & UpdateCartItemPayload) =>
+      cartApi.updateItem(itemId, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cart'] }),
   })
 
@@ -50,6 +51,9 @@ export function useCart() {
 
   const totalItems = cartData?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0
 
+  const isCartMutating =
+    updateItemMutation.isPending || removeItemMutation.isPending || clearCartMutation.isPending
+
   return {
     cart: cartData,
     isLoading,
@@ -57,6 +61,7 @@ export function useCart() {
     totalItems,
     addItem: addItemMutation.mutateAsync,
     isAddingItem: addItemMutation.isPending,
+    isCartMutating,
     updateItem: updateItemMutation.mutate,
     removeItem: removeItemMutation.mutate,
     clearCart: clearCartMutation.mutate,

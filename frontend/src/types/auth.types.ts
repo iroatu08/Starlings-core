@@ -5,6 +5,7 @@ export interface User {
   lastName: string
   phone?: string
   address?: string
+  preferences?: string
   role: 'user' | 'admin'
   isVerified: boolean
   isActive: boolean
@@ -19,6 +20,7 @@ export interface RegisterPayload {
   password: string
   phone?: string
   address?: string
+  preferences?: string
 }
 
 export interface LoginPayload {

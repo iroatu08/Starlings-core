@@ -8,41 +8,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MailModule = void 0;
 const common_1 = require("@nestjs/common");
-const mailer_1 = require("@nestjs-modules/mailer");
-const handlebars_adapter_1 = require("@nestjs-modules/mailer/dist/adapters/handlebars.adapter");
 const config_1 = require("@nestjs/config");
-const path_1 = require("path");
+const resend_1 = require("resend");
 const mail_service_1 = require("./mail.service");
+const mail_template_renderer_1 = require("./mail-template.renderer");
+const mail_constants_1 = require("./mail.constants");
 let MailModule = class MailModule {
 };
 exports.MailModule = MailModule;
 exports.MailModule = MailModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            mailer_1.MailerModule.forRootAsync({
-                imports: [config_1.ConfigModule],
-                useFactory: (configService) => ({
-                    transport: {
-                        host: configService.get('MAILTRAP_HOST'),
-                        port: configService.get('MAILTRAP_PORT'),
-                        auth: {
-                            user: configService.get('MAILTRAP_USER'),
-                            pass: configService.get('MAILTRAP_PASS'),
-                        },
-                    },
-                    defaults: {
-                        from: '"Starlings Hospitality" <noreply@starlingshosp.com>',
-                    },
-                    template: {
-                        dir: (0, path_1.join)(__dirname, 'templates'),
-                        adapter: new handlebars_adapter_1.HandlebarsAdapter(),
-                        options: { strict: true },
-                    },
-                }),
+        imports: [config_1.ConfigModule],
+        providers: [
+            mail_template_renderer_1.MailTemplateRenderer,
+            {
+                provide: mail_constants_1.RESEND_CLIENT,
+                useFactory: (config) => new resend_1.Resend(config.getOrThrow('RESEND_API_KEY')),
                 inject: [config_1.ConfigService],
-            }),
+            },
+            mail_service_1.MailService,
         ],
-        providers: [mail_service_1.MailService],
         exports: [mail_service_1.MailService],
     })
 ], MailModule);

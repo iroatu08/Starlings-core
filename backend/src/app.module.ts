@@ -15,6 +15,8 @@ import { GalleryModule } from './gallery/gallery.module';
 import { ContactModule } from './contact/contact.module';
 import { AdminModule } from './admin/admin.module';
 import { MailModule } from './mail/mail.module';
+import { NewsletterModule } from './newsletter/newsletter.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -29,12 +31,11 @@ import { MailModule } from './mail/mail.module';
         JWT_ACCESS_EXPIRES_IN: Joi.string().default('15m'),
         JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
         DATABASE_URL: Joi.string().required(),
-        MAILTRAP_HOST: Joi.string().required(),
-        MAILTRAP_PORT: Joi.number().required(),
-        MAILTRAP_USER: Joi.string().required(),
-        MAILTRAP_PASS: Joi.string().required(),
+        RESEND_API_KEY: Joi.string().required(),
+        MAIL_FROM: Joi.string().required(),
         PAYSTACK_SECRET_KEY: Joi.string().required(),
         PAYSTACK_PUBLIC_KEY: Joi.string().required(),
+        PAYSTACK_WEBHOOK_SECRET: Joi.string().required(),
         CLOUDINARY_CLOUD_NAME: Joi.string().optional().allow(''),
         CLOUDINARY_API_KEY: Joi.string().optional().allow(''),
         CLOUDINARY_API_SECRET: Joi.string().optional().allow(''),
@@ -64,6 +65,8 @@ import { MailModule } from './mail/mail.module';
     PaymentsModule,
     GalleryModule,
     ContactModule,
+    NewsletterModule,
+    ReviewsModule,
     AdminModule,
   ],
 })

@@ -24,6 +24,8 @@ const gallery_module_1 = require("./gallery/gallery.module");
 const contact_module_1 = require("./contact/contact.module");
 const admin_module_1 = require("./admin/admin.module");
 const mail_module_1 = require("./mail/mail.module");
+const newsletter_module_1 = require("./newsletter/newsletter.module");
+const reviews_module_1 = require("./reviews/reviews.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -41,12 +43,11 @@ exports.AppModule = AppModule = __decorate([
                     JWT_ACCESS_EXPIRES_IN: Joi.string().default('15m'),
                     JWT_REFRESH_EXPIRES_IN: Joi.string().default('7d'),
                     DATABASE_URL: Joi.string().required(),
-                    MAILTRAP_HOST: Joi.string().required(),
-                    MAILTRAP_PORT: Joi.number().required(),
-                    MAILTRAP_USER: Joi.string().required(),
-                    MAILTRAP_PASS: Joi.string().required(),
+                    RESEND_API_KEY: Joi.string().required(),
+                    MAIL_FROM: Joi.string().required(),
                     PAYSTACK_SECRET_KEY: Joi.string().required(),
                     PAYSTACK_PUBLIC_KEY: Joi.string().required(),
+                    PAYSTACK_WEBHOOK_SECRET: Joi.string().required(),
                     CLOUDINARY_CLOUD_NAME: Joi.string().optional().allow(''),
                     CLOUDINARY_API_KEY: Joi.string().optional().allow(''),
                     CLOUDINARY_API_SECRET: Joi.string().optional().allow(''),
@@ -73,6 +74,8 @@ exports.AppModule = AppModule = __decorate([
             payments_module_1.PaymentsModule,
             gallery_module_1.GalleryModule,
             contact_module_1.ContactModule,
+            newsletter_module_1.NewsletterModule,
+            reviews_module_1.ReviewsModule,
             admin_module_1.AdminModule,
         ],
     })

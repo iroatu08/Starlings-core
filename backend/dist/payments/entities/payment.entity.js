@@ -15,6 +15,8 @@ const booking_entity_1 = require("../../bookings/entities/booking.entity");
 var PaymentStatus;
 (function (PaymentStatus) {
     PaymentStatus["PENDING"] = "pending";
+    PaymentStatus["REFUND_PENDING"] = "refund_pending";
+    PaymentStatus["REFUNDED"] = "refunded";
     PaymentStatus["SUCCEEDED"] = "succeeded";
     PaymentStatus["FAILED"] = "failed";
 })(PaymentStatus || (exports.PaymentStatus = PaymentStatus = {}));

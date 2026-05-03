@@ -3,6 +3,8 @@ export interface Package {
   destinationId: string
   destination?: Destination
   title: string
+  packageType?: 'visa_processing' | 'hotel_reservation' | 'free_taxi' | 'airport_transfer' | 'custom'
+  isRemovable?: boolean
   description?: string
   includesVisa: boolean
   includesFlight: boolean
@@ -25,8 +27,13 @@ export interface Destination {
   priceFromNgn: number
   priceFromUsd: number
   isFeatured: boolean
+  isActive?: boolean
+  latitude?: number | null
+  longitude?: number | null
   packages?: Package[]
   galleryImages?: GalleryImage[]
+  totalPriceNgn?: number
+  totalPriceUsd?: number
   createdAt: string
 }
 

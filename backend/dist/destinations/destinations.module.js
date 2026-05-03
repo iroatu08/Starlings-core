@@ -12,12 +12,14 @@ const typeorm_1 = require("@nestjs/typeorm");
 const destinations_controller_1 = require("./destinations.controller");
 const destinations_service_1 = require("./destinations.service");
 const destination_entity_1 = require("./entities/destination.entity");
+const package_entity_1 = require("../packages/entities/package.entity");
+const booking_item_entity_1 = require("../bookings/entities/booking-item.entity");
 let DestinationsModule = class DestinationsModule {
 };
 exports.DestinationsModule = DestinationsModule;
 exports.DestinationsModule = DestinationsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([destination_entity_1.Destination])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([destination_entity_1.Destination, package_entity_1.Package, booking_item_entity_1.BookingItem])],
         controllers: [destinations_controller_1.DestinationsController],
         providers: [destinations_service_1.DestinationsService],
         exports: [destinations_service_1.DestinationsService],

@@ -5,4 +5,5 @@ export declare class RegisterDto {
     password: string;
     phone?: string;
     address?: string;
+    preferences?: string;
 }

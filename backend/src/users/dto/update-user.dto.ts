@@ -21,4 +21,9 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   address?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  preferences?: string;
 }

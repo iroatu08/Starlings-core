@@ -16,20 +16,7 @@ export declare class AuthService {
     }>;
     login(dto: LoginDto, res: any): Promise<{
         accessToken: string;
-        user: {
-            id: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            phone: string;
-            address: string;
-            role: import("../users/entities/user.entity").UserRole;
-            isVerified: boolean;
-            isActive: boolean;
-            resetPasswordExpires: Date;
-            createdAt: Date;
-            updatedAt: Date;
-        };
+        user: import("../common/utils/sanitize-user.util").PublicUser;
     }>;
     refresh(user: User, res: any): Promise<{
         accessToken: string;
@@ -43,10 +30,12 @@ export declare class AuthService {
     forgotPassword(email: string): Promise<{
         message: string;
     }>;
+    changePassword(userId: string, currentPassword: string, newPassword: string): Promise<{
+        message: string;
+    }>;
     resetPassword(token: string, newPassword: string): Promise<{
         message: string;
     }>;
     private generateTokens;
     private storeRefreshToken;
-    private sanitizeUser;
 }

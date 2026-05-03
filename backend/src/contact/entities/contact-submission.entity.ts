@@ -22,6 +22,9 @@ export class ContactSubmission {
   @Column({ type: 'text' })
   message: string;
 
+  @Column({ nullable: true })
+  budget: string;
+
   @Column({ name: 'is_read', default: false })
   isRead: boolean;
 

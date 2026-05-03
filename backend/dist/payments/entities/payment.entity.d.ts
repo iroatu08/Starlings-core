@@ -1,6 +1,8 @@
 import { Booking } from '../../bookings/entities/booking.entity';
 export declare enum PaymentStatus {
     PENDING = "pending",
+    REFUND_PENDING = "refund_pending",
+    REFUNDED = "refunded",
     SUCCEEDED = "succeeded",
     FAILED = "failed"
 }

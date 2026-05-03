@@ -29,11 +29,18 @@ let GalleryService = class GalleryService {
             api_secret: configService.get('CLOUDINARY_API_SECRET'),
         });
     }
-    findAll(destinationId) {
+    async findAll(destinationId, page = 1, limit = 30) {
+        const safeLimit = Math.min(Math.max(limit, 1), 60);
+        const safePage = Math.max(page, 1);
         const qb = this.repo.createQueryBuilder('img').leftJoinAndSelect('img.destination', 'dest');
         if (destinationId)
-            qb.where('img.destinationId = :destinationId', { destinationId });
-        return qb.orderBy('img.createdAt', 'DESC').getMany();
+            qb.andWhere('img.destinationId = :destinationId', { destinationId });
+        qb.orderBy('img.createdAt', 'DESC');
+        qb.skip((safePage - 1) * safeLimit).take(safeLimit + 1);
+        const rows = await qb.getMany();
+        const hasMore = rows.length > safeLimit;
+        const data = hasMore ? rows.slice(0, safeLimit) : rows;
+        return { data, page: safePage, limit: safeLimit, hasMore };
     }
     async uploadImage(file, dto) {
         const result = await new Promise((resolve, reject) => {

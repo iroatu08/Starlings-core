@@ -22,6 +22,7 @@ export class ContactService {
       email: dto.email,
       subject: dto.subject,
       message: dto.message,
+      budget: dto.budget,
     });
 
     return { message: 'Thank you for your message. We will be in touch shortly.' };

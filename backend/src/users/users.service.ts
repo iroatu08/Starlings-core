@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { toPublicUser } from '../common/utils/sanitize-user.util';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 
@@ -11,8 +12,7 @@ export class UsersService {
   async getMe(userId: string) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
-    const { passwordHash, refreshTokenHash, verificationToken, resetPasswordToken, ...safe } = user;
-    return safe;
+    return toPublicUser(user);
   }
 
   async updateMe(userId: string, dto: UpdateUserDto) {
@@ -30,11 +30,29 @@ export class UsersService {
     }
     qb.orderBy('user.createdAt', 'DESC').skip((page - 1) * limit).take(limit);
     const [users, total] = await qb.getManyAndCount();
-    return { users: users.map(u => { const { passwordHash, refreshTokenHash, ...s } = u; return s; }), total, page, limit };
+    return { users: users.map((u) => toPublicUser(u)), total, page, limit };
   }
 
   async updateUserAdmin(userId: string, updates: Partial<User>) {
     await this.userRepo.update(userId, updates);
     return this.getMe(userId);
+  }
+
+  async countUsers(): Promise<number> {
+    return this.userRepo.count();
+  }
+
+  async findEmailById(id: string): Promise<string> {
+    const user = await this.userRepo.findOne({ where: { id }, select: ['id', 'email'] });
+    if (!user) throw new NotFoundException('User not found');
+    return user.email;
+  }
+
+  async getVerifiedUserEmails(): Promise<string[]> {
+    const users = await this.userRepo.find({
+      where: { isVerified: true, isActive: true },
+      select: ['email'],
+    });
+    return users.map((u) => u.email);
   }
 }

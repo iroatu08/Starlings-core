@@ -1,5 +1,12 @@
-import { CreateDestinationDto } from './create-destination.dto';
-declare const UpdateDestinationDto_base: import("@nestjs/mapped-types").MappedType<Partial<CreateDestinationDto>>;
-export declare class UpdateDestinationDto extends UpdateDestinationDto_base {
+export declare class UpdateDestinationDto {
+    name?: string;
+    country?: string;
+    description?: string;
+    heroImageUrl?: string;
+    priceFromNgn?: number;
+    priceFromUsd?: number;
+    isFeatured?: boolean;
+    latitude?: number;
+    longitude?: number;
+    isActive?: boolean;
 }
-export {};

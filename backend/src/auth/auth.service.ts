@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
+import { toPublicUser } from '../common/utils/sanitize-user.util';
 import { User } from '../users/entities/user.entity';
 import { MailService } from '../mail/mail.service';
 import { RegisterDto } from './dto/register.dto';
@@ -31,9 +32,10 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(dto.password, 12);
     const verificationToken = uuidv4();
+    const { password: _pw, ...rest } = dto;
 
     const user = this.userRepo.create({
-      ...dto,
+      ...rest,
       passwordHash,
       verificationToken,
     });
@@ -67,7 +69,7 @@ export class AuthService {
 
     return {
       accessToken: tokens.accessToken,
-      user: this.sanitizeUser(user),
+      user: toPublicUser(user),
     };
   }
 
@@ -120,6 +122,15 @@ export class AuthService {
     return { message: 'If that email exists, a reset link has been sent.' };
   }
 
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+    const match = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!match) throw new UnauthorizedException('Current password is incorrect');
+    await this.userRepo.update(userId, { passwordHash: await bcrypt.hash(newPassword, 12) });
+    return { message: 'Password updated successfully.' };
+  }
+
   async resetPassword(token: string, newPassword: string) {
     const user = await this.userRepo.findOne({ where: { resetPasswordToken: token } });
     if (!user) throw new BadRequestException('Invalid or expired reset token');
@@ -160,8 +171,4 @@ export class AuthService {
     await this.userRepo.update(user.id, { refreshTokenHash: hash });
   }
 
-  private sanitizeUser(user: User) {
-    const { passwordHash, refreshTokenHash, verificationToken, resetPasswordToken, ...safe } = user;
-    return safe;
-  }
 }

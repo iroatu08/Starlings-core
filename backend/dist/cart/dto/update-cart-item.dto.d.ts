@@ -1,3 +1,5 @@
 export declare class UpdateCartItemDto {
-    quantity: number;
+    quantity?: number;
+    keptPackageIds?: string[];
+    removedPackageIds?: string[];
 }

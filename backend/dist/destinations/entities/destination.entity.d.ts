@@ -9,6 +9,9 @@ export declare class Destination {
     priceFromNgn: number;
     priceFromUsd: number;
     isFeatured: boolean;
+    isActive: boolean;
+    latitude: number | null;
+    longitude: number | null;
     packages: Package[];
     galleryImages: GalleryImage[];
     createdAt: Date;

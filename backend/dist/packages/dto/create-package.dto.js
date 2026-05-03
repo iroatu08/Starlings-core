@@ -13,11 +13,13 @@ exports.CreatePackageDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
+const package_entity_1 = require("../entities/package.entity");
 class CreatePackageDto {
 }
 exports.CreatePackageDto = CreatePackageDto;
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsUUID)(),
     __metadata("design:type", String)
 ], CreatePackageDto.prototype, "destinationId", void 0);
@@ -25,13 +27,24 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreatePackageDto.prototype, "title", void 0);
+], CreatePackageDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ enum: package_entity_1.PackageType }),
+    (0, class_validator_1.IsEnum)(package_entity_1.PackageType),
+    __metadata("design:type", String)
+], CreatePackageDto.prototype, "type", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreatePackageDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ default: true }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsBoolean)(),
+    __metadata("design:type", Boolean)
+], CreatePackageDto.prototype, "isRemovable", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ default: false }),
     (0, class_validator_1.IsOptional)(),
@@ -71,7 +84,8 @@ __decorate([
     __metadata("design:type", Number)
 ], CreatePackageDto.prototype, "priceUsd", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiProperty)({ required: false, default: 1 }),
+    (0, class_validator_1.IsOptional)(),
     (0, class_transformer_1.Type)(() => Number),
     (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.Min)(1),

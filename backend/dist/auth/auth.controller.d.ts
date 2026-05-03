@@ -4,6 +4,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/reset-password.dto';
 import { User } from '../users/entities/user.entity';
+import { ChangePasswordDto } from './dto/change-password.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -12,20 +13,7 @@ export declare class AuthController {
     }>;
     login(dto: LoginDto, res: Response): Promise<{
         accessToken: string;
-        user: {
-            id: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            phone: string;
-            address: string;
-            role: import("../users/entities/user.entity").UserRole;
-            isVerified: boolean;
-            isActive: boolean;
-            resetPasswordExpires: Date;
-            createdAt: Date;
-            updatedAt: Date;
-        };
+        user: import("../common/utils/sanitize-user.util").PublicUser;
     }>;
     refresh(user: User, res: Response): Promise<{
         accessToken: string;
@@ -40,6 +28,9 @@ export declare class AuthController {
         message: string;
     }>;
     resetPassword(dto: ResetPasswordDto): Promise<{
+        message: string;
+    }>;
+    changePassword(user: User, dto: ChangePasswordDto): Promise<{
         message: string;
     }>;
 }

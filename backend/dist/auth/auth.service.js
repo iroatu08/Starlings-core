@@ -20,6 +20,7 @@ const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const bcrypt = require("bcrypt");
 const uuid_1 = require("uuid");
+const sanitize_user_util_1 = require("../common/utils/sanitize-user.util");
 const user_entity_1 = require("../users/entities/user.entity");
 const mail_service_1 = require("../mail/mail.service");
 let AuthService = class AuthService {
@@ -35,8 +36,9 @@ let AuthService = class AuthService {
             throw new common_1.ConflictException('Email already registered');
         const passwordHash = await bcrypt.hash(dto.password, 12);
         const verificationToken = (0, uuid_1.v4)();
+        const { password: _pw, ...rest } = dto;
         const user = this.userRepo.create({
-            ...dto,
+            ...rest,
             passwordHash,
             verificationToken,
         });
@@ -66,7 +68,7 @@ let AuthService = class AuthService {
         });
         return {
             accessToken: tokens.accessToken,
-            user: this.sanitizeUser(user),
+            user: (0, sanitize_user_util_1.toPublicUser)(user),
         };
     }
     async refresh(user, res) {
@@ -108,6 +110,16 @@ let AuthService = class AuthService {
         await this.mailService.sendPasswordReset(user, token);
         return { message: 'If that email exists, a reset link has been sent.' };
     }
+    async changePassword(userId, currentPassword, newPassword) {
+        const user = await this.userRepo.findOne({ where: { id: userId } });
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
+        const match = await bcrypt.compare(currentPassword, user.passwordHash);
+        if (!match)
+            throw new common_1.UnauthorizedException('Current password is incorrect');
+        await this.userRepo.update(userId, { passwordHash: await bcrypt.hash(newPassword, 12) });
+        return { message: 'Password updated successfully.' };
+    }
     async resetPassword(token, newPassword) {
         const user = await this.userRepo.findOne({ where: { resetPasswordToken: token } });
         if (!user)
@@ -140,10 +152,6 @@ let AuthService = class AuthService {
     async storeRefreshToken(user, token) {
         const hash = await bcrypt.hash(token, 10);
         await this.userRepo.update(user.id, { refreshTokenHash: hash });
-    }
-    sanitizeUser(user) {
-        const { passwordHash, refreshTokenHash, verificationToken, resetPasswordToken, ...safe } = user;
-        return safe;
     }
 };
 exports.AuthService = AuthService;

@@ -36,6 +36,9 @@ export class User {
   @Column({ nullable: true })
   address: string;
 
+  @Column({ type: 'text', nullable: true })
+  preferences: string;
+
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 

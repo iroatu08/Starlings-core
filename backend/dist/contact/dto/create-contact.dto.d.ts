@@ -3,4 +3,5 @@ export declare class CreateContactDto {
     email: string;
     subject?: string;
     message: string;
+    budget?: string;
 }

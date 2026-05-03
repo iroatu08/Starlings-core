@@ -14,6 +14,8 @@ const typeorm_1 = require("typeorm");
 const user_entity_1 = require("../../users/entities/user.entity");
 const booking_item_entity_1 = require("./booking-item.entity");
 const payment_entity_1 = require("../../payments/entities/payment.entity");
+const booking_traveler_entity_1 = require("./booking-traveler.entity");
+const refund_request_entity_1 = require("../../payments/entities/refund-request.entity");
 var BookingStatus;
 (function (BookingStatus) {
     BookingStatus["PENDING"] = "pending";
@@ -37,6 +39,10 @@ __decorate([
     __metadata("design:type", String)
 ], Booking.prototype, "userId", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'image_url', nullable: true }),
+    __metadata("design:type", String)
+], Booking.prototype, "imageUrl", void 0);
+__decorate([
     (0, typeorm_1.ManyToOne)(() => user_entity_1.User),
     (0, typeorm_1.JoinColumn)({ name: 'user_id' }),
     __metadata("design:type", user_entity_1.User)
@@ -54,9 +60,17 @@ __decorate([
     __metadata("design:type", Array)
 ], Booking.prototype, "items", void 0);
 __decorate([
+    (0, typeorm_1.OneToMany)(() => booking_traveler_entity_1.BookingTraveler, (traveler) => traveler.booking, { cascade: true, eager: true }),
+    __metadata("design:type", Array)
+], Booking.prototype, "travelers", void 0);
+__decorate([
     (0, typeorm_1.OneToOne)(() => payment_entity_1.Payment, (payment) => payment.booking),
     __metadata("design:type", payment_entity_1.Payment)
 ], Booking.prototype, "payment", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => refund_request_entity_1.RefundRequest, (request) => request.booking),
+    __metadata("design:type", Array)
+], Booking.prototype, "refundRequests", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)

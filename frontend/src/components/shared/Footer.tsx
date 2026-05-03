@@ -1,117 +1,108 @@
 import { Link } from 'react-router-dom'
-import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from 'lucide-react'
+import { Globe2, Languages, Share2 } from 'lucide-react'
+import { Logo } from '../../images'
 
-const footerLinks = {
-  Company: [
-    { label: 'About Us', href: '/about' },
-    { label: 'Our Team', href: '/about#team' },
-    { label: 'Careers', href: '/about#careers' },
-    { label: 'Press', href: '/about#press' },
-  ],
-  Destinations: [
-    { label: 'France', href: '/destinations?country=France' },
-    { label: 'United Kingdom', href: '/destinations?country=UK' },
-    { label: 'Nigeria', href: '/destinations?country=Nigeria' },
-    { label: 'United States', href: '/destinations?country=USA' },
-    { label: 'UAE', href: '/destinations?country=UAE' },
-    { label: 'Canada', href: '/destinations?country=Canada' },
-  ],
-  Services: [
-    { label: 'Visa Assistance', href: '/services' },
-    { label: 'Flight Bookings', href: '/services' },
-    { label: 'Hotel Reservations', href: '/services' },
-    { label: 'Activity Packages', href: '/services' },
-    { label: 'Get Started', href: '/get-started' },
-  ],
-  Support: [
-    { label: 'Contact Us', href: '/contact' },
-    { label: 'FAQs', href: '/contact#faq' },
-    { label: 'Privacy Policy', href: '/privacy' },
-    { label: 'Terms of Service', href: '/terms' },
-  ],
-}
+const exploreLinks = [
+  { label: 'Destinations', href: '/destinations' },
+  { label: 'Services', href: '/services' },
+  { label: 'Gallery', href: '/gallery' },
+]
+
+const companyLinks = [
+  { label: 'About Us', href: '/about' },
+  { label: 'Contact Us', href: '/contact' },
+  { label: 'Privacy Policy', href: '/privacy' },
+]
 
 export function Footer() {
+  const year = new Date().getFullYear()
+
   return (
-    <footer className="bg-navy text-white">
-      {/* Main Footer */}
-      <div className="container-custom py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4">
-              <span className="text-2xl">✈</span>
-              <div>
-                <span className="font-display text-xl font-bold text-gold">Starlings</span>
-                <span className="block text-xs text-white/40 tracking-widest uppercase">Hospitality</span>
-              </div>
+    <footer className="w-full bg-[#041534] text-white">
+      <div className="mx-auto max-w-screen-2xl px-6 pb-12 pt-24 md:px-12">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10 xl:gap-x-16">
+          <div className="max-w-sm">
+            <Link to="/" className="mb-8 block">
+              <img src={Logo} alt="Starlings" className="h-12 w-auto object-contain brightness-0 invert" />
             </Link>
-            <p className="text-white/60 text-sm leading-relaxed mb-6">
-              Where your travel dreams become reality. A premium Dubai-based travel agency serving destinations across France, UK, Nigeria, USA, UAE, and Canada.
+            <p className="font-sans text-sm leading-relaxed tracking-wide text-stone-400">
+              Elevating the art of travel in Dubai. Curating bespoke journeys for the modern connoisseur.
             </p>
-            {/* Social */}
-            <div className="flex gap-3">
-              {[
-                { icon: Facebook, href: '#', label: 'Facebook' },
-                { icon: Instagram, href: '#', label: 'Instagram' },
-                { icon: Twitter, href: '#', label: 'Twitter' },
-                { icon: Youtube, href: '#', label: 'YouTube' },
-              ].map(({ icon: Icon, href, label }) => (
-                <a
-                  key={label}
-                  href={href}
-                  aria-label={label}
-                  className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center text-white/60 hover:border-gold hover:text-gold transition-all duration-200"
-                >
-                  <Icon size={16} />
-                </a>
-              ))}
-            </div>
           </div>
 
-          {/* Links */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="font-semibold text-gold text-sm mb-4 tracking-wide">{category}</h4>
-              <ul className="space-y-2">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      to={link.href}
-                      className="text-white/60 text-sm hover:text-gold transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div>
+            <h2 className="mb-6 font-display text-xl text-white">Explore</h2>
+            <ul className="space-y-4">
+              {exploreLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    className="font-sans text-sm tracking-wide text-stone-400 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="mb-6 font-display text-xl text-white">Company</h2>
+            <ul className="space-y-4">
+              {companyLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    to={link.href}
+                    className="font-sans text-sm tracking-wide text-stone-400 transition-colors hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="mb-6 font-display text-xl text-white">Contact</h2>
+            <ul className="space-y-4 font-sans text-sm tracking-wide text-stone-400">
+              <li>Sheikh Zayed Road, Dubai, UAE</li>
+              <li>
+                <a href="mailto:concierge@starlings.ae" className="transition-colors hover:text-white">
+                  concierge@starlings.ae
+                </a>
+              </li>
+              <li>
+                <a href="tel:+97141234567" className="transition-colors hover:text-white">
+                +234 812 322 8812
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        {/* Contact Strip */}
-        <div className="mt-12 pt-8 border-t border-white/10 grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { icon: MapPin, text: 'Sheikh Zayed Road, Dubai, UAE' },
-            { icon: Phone, text: '+971 50 000 0000' },
-            { icon: Mail, text: 'info@starlingshosp.com' },
-          ].map(({ icon: Icon, text }) => (
-            <div key={text} className="flex items-center gap-3 text-white/60 text-sm">
-              <Icon size={16} className="text-gold flex-shrink-0" />
-              <span>{text}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Bottom Bar */}
-      <div className="border-t border-white/10 py-6">
-        <div className="container-custom flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/40">
-          <p>© {new Date().getFullYear()} Starlings Hospitality. All rights reserved.</p>
-          <div className="flex gap-4">
-            <Link to="/privacy" className="hover:text-gold transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-gold transition-colors">Terms of Service</Link>
-            <Link to="/sitemap" className="hover:text-gold transition-colors">Sitemap</Link>
+        <div className="mt-24 flex flex-col items-center justify-between gap-8 border-t border-white/10 pt-12 md:flex-row md:items-start">
+          <p className="text-center font-sans text-sm tracking-wide text-stone-400 md:text-left">
+            © {year} Starlings Hospitality Dubai. All rights reserved.
+          </p>
+          <div className="flex items-center gap-8 text-white">
+            <Languages
+              size={22}
+              strokeWidth={1.5}
+              className="cursor-pointer transition-colors hover:text-amber-400"
+              aria-hidden
+            />
+            <Globe2
+              size={22}
+              strokeWidth={1.5}
+              className="cursor-pointer transition-colors hover:text-amber-400"
+              aria-hidden
+            />
+            <Share2
+              size={22}
+              strokeWidth={1.5}
+              className="cursor-pointer transition-colors hover:text-amber-400"
+              aria-hidden
+            />
           </div>
         </div>
       </div>

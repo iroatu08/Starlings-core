@@ -13,6 +13,7 @@ exports.CreateDestinationDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
+const create_package_dto_1 = require("../../packages/dto/create-package.dto");
 class CreateDestinationDto {
 }
 exports.CreateDestinationDto = CreateDestinationDto;
@@ -57,4 +58,25 @@ __decorate([
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)
 ], CreateDestinationDto.prototype, "isFeatured", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateDestinationDto.prototype, "latitude", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Type)(() => Number),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateDestinationDto.prototype, "longitude", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: [create_package_dto_1.CreatePackageDto] }),
+    (0, class_validator_1.ArrayMinSize)(1),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => create_package_dto_1.CreatePackageDto),
+    __metadata("design:type", Array)
+], CreateDestinationDto.prototype, "packages", void 0);
 //# sourceMappingURL=create-destination.dto.js.map

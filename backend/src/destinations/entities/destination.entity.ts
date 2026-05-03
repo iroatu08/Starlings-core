@@ -34,6 +34,15 @@ export class Destination {
   @Column({ name: 'is_featured', default: false })
   isFeatured: boolean;
 
+  @Column({ name: 'is_active', default: true })
+  isActive: boolean;
+
+  @Column({ type: 'double precision', nullable: true })
+  latitude: number | null;
+
+  @Column({ type: 'double precision', nullable: true })
+  longitude: number | null;
+
   @OneToMany(() => Package, (pkg) => pkg.destination)
   packages: Package[];
 

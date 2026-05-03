@@ -13,6 +13,9 @@ const bookings_controller_1 = require("./bookings.controller");
 const bookings_service_1 = require("./bookings.service");
 const booking_entity_1 = require("./entities/booking.entity");
 const booking_item_entity_1 = require("./entities/booking-item.entity");
+const booking_traveler_entity_1 = require("./entities/booking-traveler.entity");
+const payment_entity_1 = require("../payments/entities/payment.entity");
+const refund_request_entity_1 = require("../payments/entities/refund-request.entity");
 const cart_module_1 = require("../cart/cart.module");
 const mail_module_1 = require("../mail/mail.module");
 let BookingsModule = class BookingsModule {
@@ -20,7 +23,7 @@ let BookingsModule = class BookingsModule {
 exports.BookingsModule = BookingsModule;
 exports.BookingsModule = BookingsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([booking_entity_1.Booking, booking_item_entity_1.BookingItem]), cart_module_1.CartModule, mail_module_1.MailModule],
+        imports: [typeorm_1.TypeOrmModule.forFeature([booking_entity_1.Booking, booking_item_entity_1.BookingItem, booking_traveler_entity_1.BookingTraveler, payment_entity_1.Payment, refund_request_entity_1.RefundRequest]), cart_module_1.CartModule, mail_module_1.MailModule],
         controllers: [bookings_controller_1.BookingsController],
         providers: [bookings_service_1.BookingsService],
         exports: [bookings_service_1.BookingsService],

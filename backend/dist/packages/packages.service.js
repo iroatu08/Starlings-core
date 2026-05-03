@@ -34,12 +34,40 @@ let PackagesService = class PackagesService {
         return pkg;
     }
     async create(dto) {
-        const pkg = this.repo.create(dto);
+        const pkg = this.repo.create({
+            destinationId: dto.destinationId,
+            title: dto.name,
+            packageType: dto.type,
+            description: dto.description,
+            isRemovable: dto.isRemovable ?? true,
+            includesVisa: dto.includesVisa ?? false,
+            includesFlight: dto.includesFlight ?? false,
+            includesHotel: dto.includesHotel ?? false,
+            includesActivities: dto.includesActivities ?? false,
+            priceNgn: dto.priceNgn,
+            priceUsd: dto.priceUsd,
+            durationDays: dto.durationDays ?? 1,
+            maxCapacity: dto.maxCapacity ?? 20,
+        });
         return this.repo.save(pkg);
     }
     async update(id, dto) {
         await this.findOne(id);
-        await this.repo.update(id, dto);
+        await this.repo.update(id, {
+            destinationId: dto.destinationId,
+            title: dto.name,
+            packageType: dto.type,
+            description: dto.description,
+            isRemovable: dto.isRemovable,
+            includesVisa: dto.includesVisa,
+            includesFlight: dto.includesFlight,
+            includesHotel: dto.includesHotel,
+            includesActivities: dto.includesActivities,
+            priceNgn: dto.priceNgn,
+            priceUsd: dto.priceUsd,
+            durationDays: dto.durationDays,
+            maxCapacity: dto.maxCapacity,
+        });
         return this.findOne(id);
     }
     async remove(id) {

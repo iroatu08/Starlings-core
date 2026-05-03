@@ -9,7 +9,13 @@ export class GalleryController {
 
   @Get()
   @ApiQuery({ name: 'destinationId', required: false })
-  findAll(@Query('destinationId') destinationId?: string) {
-    return this.galleryService.findAll(destinationId);
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
+  findAll(
+    @Query('destinationId') destinationId?: string,
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
+    return this.galleryService.findAll(destinationId, page, limit);
   }
 }

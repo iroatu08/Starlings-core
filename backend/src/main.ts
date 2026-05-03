@@ -7,6 +7,17 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 
+/** Vite often bumps port (5173 → 5174) when the default is taken; allow both in non-production. */
+function corsOrigin(): string | string[] {
+  const primary = process.env.FRONTEND_URL?.trim() || 'http://localhost:5173';
+  if (process.env.NODE_ENV === 'production') {
+    return primary;
+  }
+  const commonLocal = ['http://localhost:5173', 'http://localhost:5174'];
+  const merged = [...new Set([primary, ...commonLocal])];
+  return merged.length === 1 ? merged[0] : merged;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -16,7 +27,7 @@ async function bootstrap() {
 
   // CORS
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: corsOrigin(),
     credentials: true,
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

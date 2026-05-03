@@ -28,4 +28,9 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   address?: string;
+
+  @ApiProperty({ example: 'Paris, Dubai, safaris', required: false })
+  @IsOptional()
+  @IsString()
+  preferences?: string;
 }

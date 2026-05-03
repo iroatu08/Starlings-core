@@ -20,10 +20,12 @@ let DestinationsController = class DestinationsController {
     constructor(destinationsService) {
         this.destinationsService = destinationsService;
     }
-    findAll(country, featured) {
+    findAll(country, featured, minPriceNgn, maxPriceNgn) {
         return this.destinationsService.findAll({
             country,
             featured: featured ? featured === 'true' : undefined,
+            minPriceNgn: minPriceNgn ? Number(minPriceNgn) : undefined,
+            maxPriceNgn: maxPriceNgn ? Number(maxPriceNgn) : undefined,
         });
     }
     findOne(id) {
@@ -35,10 +37,14 @@ __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiQuery)({ name: 'country', required: false }),
     (0, swagger_1.ApiQuery)({ name: 'featured', required: false, type: Boolean }),
+    (0, swagger_1.ApiQuery)({ name: 'minPriceNgn', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'maxPriceNgn', required: false, type: Number }),
     __param(0, (0, common_1.Query)('country')),
     __param(1, (0, common_1.Query)('featured')),
+    __param(2, (0, common_1.Query)('minPriceNgn')),
+    __param(3, (0, common_1.Query)('maxPriceNgn')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], DestinationsController.prototype, "findAll", null);
 __decorate([

@@ -16,6 +16,7 @@ exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const sanitize_user_util_1 = require("../common/utils/sanitize-user.util");
 const user_entity_1 = require("./entities/user.entity");
 let UsersService = class UsersService {
     constructor(userRepo) {
@@ -25,8 +26,7 @@ let UsersService = class UsersService {
         const user = await this.userRepo.findOne({ where: { id: userId } });
         if (!user)
             throw new common_1.NotFoundException('User not found');
-        const { passwordHash, refreshTokenHash, verificationToken, resetPasswordToken, ...safe } = user;
-        return safe;
+        return (0, sanitize_user_util_1.toPublicUser)(user);
     }
     async updateMe(userId, dto) {
         await this.userRepo.update(userId, dto);
@@ -39,11 +39,27 @@ let UsersService = class UsersService {
         }
         qb.orderBy('user.createdAt', 'DESC').skip((page - 1) * limit).take(limit);
         const [users, total] = await qb.getManyAndCount();
-        return { users: users.map(u => { const { passwordHash, refreshTokenHash, ...s } = u; return s; }), total, page, limit };
+        return { users: users.map((u) => (0, sanitize_user_util_1.toPublicUser)(u)), total, page, limit };
     }
     async updateUserAdmin(userId, updates) {
         await this.userRepo.update(userId, updates);
         return this.getMe(userId);
+    }
+    async countUsers() {
+        return this.userRepo.count();
+    }
+    async findEmailById(id) {
+        const user = await this.userRepo.findOne({ where: { id }, select: ['id', 'email'] });
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
+        return user.email;
+    }
+    async getVerifiedUserEmails() {
+        const users = await this.userRepo.find({
+            where: { isVerified: true, isActive: true },
+            select: ['email'],
+        });
+        return users.map((u) => u.email);
     }
 };
 exports.UsersService = UsersService;

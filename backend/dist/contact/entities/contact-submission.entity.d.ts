@@ -4,6 +4,7 @@ export declare class ContactSubmission {
     email: string;
     subject: string;
     message: string;
+    budget: string;
     isRead: boolean;
     createdAt: Date;
 }

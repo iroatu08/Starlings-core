@@ -1,18 +1,30 @@
-import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { Resend } from 'resend';
 import { User } from '../users/entities/user.entity';
 import { Booking } from '../bookings/entities/booking.entity';
 import { Payment } from '../payments/entities/payment.entity';
 import { ContactSubmission } from '../contact/entities/contact-submission.entity';
+import { MailTemplateRenderer } from './mail-template.renderer';
 export declare class MailService {
-    private readonly mailerService;
+    private readonly config;
+    private readonly renderer;
+    private readonly resend;
     private readonly logger;
-    constructor(mailerService: MailerService);
+    private readonly mailFrom;
+    constructor(config: ConfigService, renderer: MailTemplateRenderer, resend: Resend);
+    private sendWithResend;
+    private sendTemplate;
+    private buildOwnerReceiptPdf;
     sendWelcome(user: User): Promise<void>;
     sendVerificationEmail(user: User, token: string): Promise<void>;
     sendBookingConfirmation(user: User, booking: Booking): Promise<void>;
+    sendBookingInitiated(user: User, booking: Booking): Promise<void>;
     sendPaymentReceipt(user: User, payment: Payment): Promise<void>;
+    sendOwnerPostPaymentSummary(user: User, booking: Booking, payment: Payment): Promise<void>;
+    sendTravelerNotifications(booking: Booking, payment: Payment, ownerEmail: string): Promise<void>;
     sendPasswordReset(user: User, token: string): Promise<void>;
     sendBookingStatusUpdate(user: User, booking: Booking): Promise<void>;
     sendContactAutoReply(submission: ContactSubmission): Promise<void>;
-    sendAdminAlert(type: string, payload: any): Promise<void>;
+    sendHtmlEmail(to: string, subject: string, html: string): Promise<void>;
+    sendAdminAlert(type: string, payload: Record<string, unknown>): Promise<void>;
 }

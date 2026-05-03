@@ -6,4 +6,9 @@ export class CreateContactDto {
   @ApiProperty() @IsEmail() email: string;
   @ApiProperty({ required: false }) @IsOptional() @IsString() subject?: string;
   @ApiProperty() @IsString() message: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  budget?: string;
 }

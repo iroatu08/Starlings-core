@@ -9,6 +9,14 @@ import {
 } from 'typeorm';
 import { Destination } from '../../destinations/entities/destination.entity';
 
+export enum PackageType {
+  VISA_PROCESSING = 'visa_processing',
+  HOTEL_RESERVATION = 'hotel_reservation',
+  FREE_TAXI = 'free_taxi',
+  AIRPORT_TRANSFER = 'airport_transfer',
+  CUSTOM = 'custom',
+}
+
 @Entity('packages')
 export class Package {
   @PrimaryGeneratedColumn('uuid')
@@ -24,8 +32,19 @@ export class Package {
   @Column()
   title: string;
 
+  @Column({
+    name: 'package_type',
+    type: 'enum',
+    enum: PackageType,
+    default: PackageType.CUSTOM,
+  })
+  packageType: PackageType;
+
   @Column({ type: 'text', nullable: true })
   description: string;
+
+  @Column({ name: 'is_removable', default: true })
+  isRemovable: boolean;
 
   @Column({ name: 'includes_visa', default: false })
   includesVisa: boolean;
@@ -45,7 +64,7 @@ export class Package {
   @Column({ name: 'price_usd', type: 'decimal', precision: 10, scale: 2 })
   priceUsd: number;
 
-  @Column({ name: 'duration_days' })
+  @Column({ name: 'duration_days', default: 1 })
   durationDays: number;
 
   @Column({ name: 'max_capacity', default: 20 })

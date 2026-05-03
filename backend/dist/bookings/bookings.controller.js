@@ -19,26 +19,38 @@ const bookings_service_1 = require("./bookings.service");
 const jwt_auth_guard_1 = require("../common/guards/jwt-auth.guard");
 const get_user_decorator_1 = require("../common/decorators/get-user.decorator");
 const user_entity_1 = require("../users/entities/user.entity");
+const create_booking_dto_1 = require("./dto/create-booking.dto");
+const request_refund_dto_1 = require("./dto/request-refund.dto");
 let BookingsController = class BookingsController {
     constructor(bookingsService) {
         this.bookingsService = bookingsService;
     }
-    createFromCart(user) {
-        return this.bookingsService.createFromCart(user);
+    createFromCart(user, dto) {
+        return this.bookingsService.createFromCart(user, dto);
     }
     getMyBookings(user) {
         return this.bookingsService.findMyBookings(user.id);
     }
-    getBooking(id) {
-        return this.bookingsService.findOne(id);
+    getBooking(id, user) {
+        return this.bookingsService.findOneForUser(id, user.id, user.role);
+    }
+    requestRefund(id, user, dto) {
+        return this.bookingsService.requestRefund(id, user, dto.reason);
+    }
+    async downloadReceiptPdf(id, user, res) {
+        const { fileName, buffer } = await this.bookingsService.generateReceiptPdf(id, user);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${fileName}"`);
+        res.send(buffer);
     }
 };
 exports.BookingsController = BookingsController;
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, get_user_decorator_1.GetUser)()),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_entity_1.User]),
+    __metadata("design:paramtypes", [user_entity_1.User, create_booking_dto_1.CreateBookingDto]),
     __metadata("design:returntype", void 0)
 ], BookingsController.prototype, "createFromCart", null);
 __decorate([
@@ -51,10 +63,29 @@ __decorate([
 __decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, user_entity_1.User]),
     __metadata("design:returntype", void 0)
 ], BookingsController.prototype, "getBooking", null);
+__decorate([
+    (0, common_1.Post)(':id/refund-requests'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
+    __param(2, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_entity_1.User, request_refund_dto_1.RequestRefundDto]),
+    __metadata("design:returntype", void 0)
+], BookingsController.prototype, "requestRefund", null);
+__decorate([
+    (0, common_1.Get)(':id/receipt.pdf'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
+    __param(2, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, user_entity_1.User, Object]),
+    __metadata("design:returntype", Promise)
+], BookingsController.prototype, "downloadReceiptPdf", null);
 exports.BookingsController = BookingsController = __decorate([
     (0, swagger_1.ApiTags)('bookings'),
     (0, swagger_1.ApiBearerAuth)(),

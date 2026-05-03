@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import tailwindcssAnimate from 'tailwindcss-animate'
 
 const config: Config = {
   darkMode: ['class'],
@@ -76,6 +77,20 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        /**
+         * Editorial join flow — flat keys so utilities (e.g. bg-editorial-primary) resolve
+         * reliably in Tailwind JIT and Tailwind CSS IntelliSense (nested objects are often skipped).
+         */
+        'editorial-primary': '#041534',
+        'editorial-gold': '#785a00',
+        'editorial-surface': '#fbf9f5',
+        'editorial-surface-container-low': '#f5f3ef',
+        'editorial-on-surface-variant': '#45464e',
+        'editorial-outline-variant': '#c5c6cf',
+        'editorial-on-background': '#1b1c1a',
+        /** Admin shell (management suite) */
+        'admin-canvas': '#F5F5F0',
+        'admin-navy': '#0A162B',
       },
       fontFamily: {
         display: ['Playfair Display', 'Georgia', 'serif'],
@@ -112,7 +127,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 }
 
 export default config

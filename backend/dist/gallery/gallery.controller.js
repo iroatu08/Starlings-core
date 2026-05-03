@@ -20,17 +20,21 @@ let GalleryController = class GalleryController {
     constructor(galleryService) {
         this.galleryService = galleryService;
     }
-    findAll(destinationId) {
-        return this.galleryService.findAll(destinationId);
+    findAll(destinationId, page, limit) {
+        return this.galleryService.findAll(destinationId, page, limit);
     }
 };
 exports.GalleryController = GalleryController;
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiQuery)({ name: 'destinationId', required: false }),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false }),
     __param(0, (0, common_1.Query)('destinationId')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Number, Number]),
     __metadata("design:returntype", void 0)
 ], GalleryController.prototype, "findAll", null);
 exports.GalleryController = GalleryController = __decorate([

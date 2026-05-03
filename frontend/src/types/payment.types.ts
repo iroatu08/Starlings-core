@@ -1,4 +1,4 @@
-export type PaymentStatus = 'pending' | 'succeeded' | 'failed'
+
 export type PaymentChannel = 'card' | 'bank_transfer' | 'ussd' | 'mobile_money'
 
 export interface Payment {
@@ -18,4 +18,19 @@ export interface InitializePaymentResponse {
   authorization_url: string
   access_code: string
   reference: string
+}
+
+export enum PaymentStatus {
+  PENDING = 'pending',
+  REFUND_PENDING = 'refund_pending',
+  REFUNDED = 'refunded',
+  SUCCEEDED = 'succeeded',
+  FAILED = 'failed',
+}
+
+export enum BookingStatus {
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  CANCELLED = 'cancelled',
+  COMPLETED = 'completed',
 }

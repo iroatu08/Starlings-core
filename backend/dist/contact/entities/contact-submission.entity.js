@@ -35,6 +35,10 @@ __decorate([
     __metadata("design:type", String)
 ], ContactSubmission.prototype, "message", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], ContactSubmission.prototype, "budget", void 0);
+__decorate([
     (0, typeorm_1.Column)({ name: 'is_read', default: false }),
     __metadata("design:type", Boolean)
 ], ContactSubmission.prototype, "isRead", void 0);

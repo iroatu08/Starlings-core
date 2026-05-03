@@ -49,6 +49,18 @@ __decorate([
     __metadata("design:type", Boolean)
 ], Destination.prototype, "isFeatured", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'is_active', default: true }),
+    __metadata("design:type", Boolean)
+], Destination.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'double precision', nullable: true }),
+    __metadata("design:type", Number)
+], Destination.prototype, "latitude", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'double precision', nullable: true }),
+    __metadata("design:type", Number)
+], Destination.prototype, "longitude", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => package_entity_1.Package, (pkg) => pkg.destination),
     __metadata("design:type", Array)
 ], Destination.prototype, "packages", void 0);

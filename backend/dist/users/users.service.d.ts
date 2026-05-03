@@ -4,67 +4,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export declare class UsersService {
     private userRepo;
     constructor(userRepo: Repository<User>);
-    getMe(userId: string): Promise<{
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        phone: string;
-        address: string;
-        role: import("./entities/user.entity").UserRole;
-        isVerified: boolean;
-        isActive: boolean;
-        resetPasswordExpires: Date;
-        createdAt: Date;
-        updatedAt: Date;
-    }>;
-    updateMe(userId: string, dto: UpdateUserDto): Promise<{
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        phone: string;
-        address: string;
-        role: import("./entities/user.entity").UserRole;
-        isVerified: boolean;
-        isActive: boolean;
-        resetPasswordExpires: Date;
-        createdAt: Date;
-        updatedAt: Date;
-    }>;
+    getMe(userId: string): Promise<import("../common/utils/sanitize-user.util").PublicUser>;
+    updateMe(userId: string, dto: UpdateUserDto): Promise<import("../common/utils/sanitize-user.util").PublicUser>;
     findAll(page?: number, limit?: number, search?: string): Promise<{
-        users: {
-            id: string;
-            email: string;
-            firstName: string;
-            lastName: string;
-            phone: string;
-            address: string;
-            role: import("./entities/user.entity").UserRole;
-            isVerified: boolean;
-            isActive: boolean;
-            verificationToken: string;
-            resetPasswordToken: string;
-            resetPasswordExpires: Date;
-            createdAt: Date;
-            updatedAt: Date;
-        }[];
+        users: import("../common/utils/sanitize-user.util").PublicUser[];
         total: number;
         page: number;
         limit: number;
     }>;
-    updateUserAdmin(userId: string, updates: Partial<User>): Promise<{
-        id: string;
-        email: string;
-        firstName: string;
-        lastName: string;
-        phone: string;
-        address: string;
-        role: import("./entities/user.entity").UserRole;
-        isVerified: boolean;
-        isActive: boolean;
-        resetPasswordExpires: Date;
-        createdAt: Date;
-        updatedAt: Date;
-    }>;
+    updateUserAdmin(userId: string, updates: Partial<User>): Promise<import("../common/utils/sanitize-user.util").PublicUser>;
+    countUsers(): Promise<number>;
+    findEmailById(id: string): Promise<string>;
+    getVerifiedUserEmails(): Promise<string[]>;
 }

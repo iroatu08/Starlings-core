@@ -13,6 +13,7 @@ exports.CartItem = void 0;
 const typeorm_1 = require("typeorm");
 const cart_entity_1 = require("./cart.entity");
 const package_entity_1 = require("../../packages/entities/package.entity");
+const destination_entity_1 = require("../../destinations/entities/destination.entity");
 let CartItem = class CartItem {
 };
 exports.CartItem = CartItem;
@@ -30,14 +31,23 @@ __decorate([
     __metadata("design:type", cart_entity_1.Cart)
 ], CartItem.prototype, "cart", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'package_id' }),
+    (0, typeorm_1.Column)({ name: 'package_id', nullable: true }),
     __metadata("design:type", String)
 ], CartItem.prototype, "packageId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => package_entity_1.Package, { eager: true, onDelete: 'CASCADE' }),
+    (0, typeorm_1.ManyToOne)(() => package_entity_1.Package, { eager: true, onDelete: 'SET NULL', nullable: true }),
     (0, typeorm_1.JoinColumn)({ name: 'package_id' }),
     __metadata("design:type", package_entity_1.Package)
 ], CartItem.prototype, "package", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'destination_id', nullable: true }),
+    __metadata("design:type", String)
+], CartItem.prototype, "destinationId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => destination_entity_1.Destination, { eager: true, onDelete: 'SET NULL', nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'destination_id' }),
+    __metadata("design:type", destination_entity_1.Destination)
+], CartItem.prototype, "destination", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: 1 }),
     __metadata("design:type", Number)
@@ -46,6 +56,10 @@ __decorate([
     (0, typeorm_1.Column)({ name: 'unit_price_ngn', type: 'decimal', precision: 12, scale: 2 }),
     __metadata("design:type", Number)
 ], CartItem.prototype, "unitPriceNgn", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'bundle_snapshot', type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], CartItem.prototype, "bundleSnapshot", void 0);
 exports.CartItem = CartItem = __decorate([
     (0, typeorm_1.Entity)('cart_items')
 ], CartItem);

@@ -9,9 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Package = void 0;
+exports.Package = exports.PackageType = void 0;
 const typeorm_1 = require("typeorm");
 const destination_entity_1 = require("../../destinations/entities/destination.entity");
+var PackageType;
+(function (PackageType) {
+    PackageType["VISA_PROCESSING"] = "visa_processing";
+    PackageType["HOTEL_RESERVATION"] = "hotel_reservation";
+    PackageType["FREE_TAXI"] = "free_taxi";
+    PackageType["AIRPORT_TRANSFER"] = "airport_transfer";
+    PackageType["CUSTOM"] = "custom";
+})(PackageType || (exports.PackageType = PackageType = {}));
 let Package = class Package {
 };
 exports.Package = Package;
@@ -33,9 +41,22 @@ __decorate([
     __metadata("design:type", String)
 ], Package.prototype, "title", void 0);
 __decorate([
+    (0, typeorm_1.Column)({
+        name: 'package_type',
+        type: 'enum',
+        enum: PackageType,
+        default: PackageType.CUSTOM,
+    }),
+    __metadata("design:type", String)
+], Package.prototype, "packageType", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], Package.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'is_removable', default: true }),
+    __metadata("design:type", Boolean)
+], Package.prototype, "isRemovable", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'includes_visa', default: false }),
     __metadata("design:type", Boolean)
@@ -61,7 +82,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Package.prototype, "priceUsd", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ name: 'duration_days' }),
+    (0, typeorm_1.Column)({ name: 'duration_days', default: 1 }),
     __metadata("design:type", Number)
 ], Package.prototype, "durationDays", void 0);
 __decorate([
