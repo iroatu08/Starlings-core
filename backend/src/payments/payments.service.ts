@@ -3,6 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
   BadRequestException,
+  ForbiddenException,
   Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -53,10 +54,18 @@ export class PaymentsService {
       where: { id: paymentId },
       relations: ['booking', 'booking.user', 'booking.items', 'booking.items.package', 'booking.items.destination', 'booking.travelers'],
     });
-    if (!payment?.booking) return;
+    if (!payment?.booking) {
+      this.logger.warn(`sendPostPaymentEmails: no booking for payment ${paymentId}`);
+      return;
+    }
 
     const bookingOwner = payment.booking.user || fallbackUser;
-    if (!bookingOwner) return;
+    if (!bookingOwner) {
+      this.logger.warn(
+        `sendPostPaymentEmails: missing owner user for payment ${paymentId} (booking ${payment.booking.id})`,
+      );
+      return;
+    }
     await this.mailService.sendOwnerPostPaymentSummary(bookingOwner, payment.booking, payment);
     await this.mailService.sendTravelerNotifications(payment.booking, payment, bookingOwner.email);
   }
@@ -153,18 +162,32 @@ export class PaymentsService {
   }
 
   async verify(reference: string, user: User) {
+    const payment = await this.paymentRepo.findOne({
+      where: { paystackReference: reference },
+      relations: ['booking'],
+    });
+    if (!payment) throw new NotFoundException('Payment record not found');
+    if (payment.userId !== user.id) {
+      throw new ForbiddenException('This payment does not belong to the current user');
+    }
+
+    if (payment.status === PaymentStatus.SUCCEEDED) {
+      this.logger.log(`verify: payment already succeeded for ${reference}, skipping Paystack and emails`);
+      return {
+        status: 'success',
+        amount: Number(payment.amountNgn),
+        reference,
+        bookingId: payment.bookingId,
+        alreadyProcessed: true,
+      };
+    }
+
     const response = await this.paystack.transaction.verify(reference);
     const data = response.data;
 
     if (!data || data.status !== 'success') {
       throw new BadRequestException('Payment verification failed');
     }
-
-    const payment = await this.paymentRepo.findOne({
-      where: { paystackReference: reference },
-      relations: ['booking'],
-    });
-    if (!payment) throw new NotFoundException('Payment record not found');
 
     await this.paymentRepo.update(payment.id, {
       status: PaymentStatus.SUCCEEDED,
@@ -176,7 +199,13 @@ export class PaymentsService {
     await this.bookingRepo.update(payment.bookingId, { status: BookingStatus.CONFIRMED });
     await this.sendPostPaymentEmails(payment.id, user);
 
-    return { status: 'success', amount: data.amount / 100, reference, bookingId: payment.bookingId };
+    return {
+      status: 'success',
+      amount: data.amount / 100,
+      reference,
+      bookingId: payment.bookingId,
+      alreadyProcessed: false,
+    };
   }
 
   // this is the webhook endpoint for paystack

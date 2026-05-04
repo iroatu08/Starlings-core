@@ -102,6 +102,7 @@ export class MailService {
     return done;
   }
 
+  //this is for sending the email to the user to welcome them to Starlings Hospitality
   async sendWelcome(user: User) {
     try {
       await this.sendTemplate(user.email, 'Welcome to Starlings Hospitality!', 'welcome', {
@@ -113,6 +114,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to verify their email
   async sendVerificationEmail(user: User, token: string) {
     try {
       await this.sendTemplate(user.email, 'Verify your Starlings account', 'verify-email', {
@@ -125,6 +127,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to confirm that their booking is confirmed
   async sendBookingConfirmation(user: User, booking: Booking) {
     try {
       const destinationGroups = buildDestinationGroupsForEmail(booking.items ?? []);
@@ -148,6 +151,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to confirm that their booking has been initiated
   async sendBookingInitiated(user: User, booking: Booking) {
     try {
       await this.sendTemplate(
@@ -166,6 +170,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to confirm that we have received their payment
   async sendPaymentReceipt(user: User, payment: Payment) {
     try {
       await this.sendTemplate(user.email, 'Payment received — Starlings Hospitality', 'payment-receipt', {
@@ -179,44 +184,59 @@ export class MailService {
       this.logger.error(`Failed to send payment receipt to ${user.email}`, err.stack);
     }
   }
-
+//this is for sending the email to the owner after the payment is confirmed
   async sendOwnerPostPaymentSummary(user: User, booking: Booking, payment: Payment) {
     try {
       const travelers = (booking.travelers ?? []) as BookingTraveler[];
-      const pdfAttachment = await this.buildOwnerReceiptPdf(user, booking, payment);
       const destinationGroups = buildDestinationGroupsForEmail(booking.items ?? []);
+      const context: Record<string, unknown> = {
+        ownerFirstName: user.firstName,
+        ownerLastName: user.lastName,
+        ownerEmail: user.email,
+        ownerPhone: user.phone ?? '',
+        bookingReference: booking.referenceNumber,
+        paystackReference: payment.paystackReference,
+        paidAt: payment.paidAt,
+        amountNgn: Number(payment.amountNgn),
+        bookingCreatedAt: booking.createdAt,
+        travelers: travelers.map((traveler) => ({
+          firstName: traveler.firstName,
+          lastName: traveler.lastName,
+          email: traveler.email || '—',
+          phone: traveler.phone || '—',
+          isPrimary: traveler.isPrimary,
+        })),
+        items: booking.items ?? [],
+        destinationGroups,
+        destinationsSummary: buildDestinationsSummary(destinationGroups),
+        totalAmountNgn: Number(booking.totalAmountNgn),
+      };
+
+      let pdfAttachment: Buffer | null = null;
+      try {
+        pdfAttachment = await this.buildOwnerReceiptPdf(user, booking, payment);
+      } catch (pdfErr) {
+        const err = pdfErr as Error;
+        this.logger.warn(
+          `Receipt PDF failed for ${booking.referenceNumber}; sending owner email without attachment: ${err.message}`,
+        );
+      }
+
+      const attachments: MailAttachment[] = pdfAttachment
+        ? [
+            {
+              filename: `receipt-${booking.referenceNumber}.pdf`,
+              content: pdfAttachment,
+            },
+          ]
+        : [];
+
       await this.sendTemplate(
         user.email,
         `Payment confirmed — Ref #${booking.referenceNumber}`,
         'booking-owner-paid',
-        {
-          ownerFirstName: user.firstName,
-          ownerLastName: user.lastName,
-          ownerEmail: user.email,
-          ownerPhone: user.phone ?? '',
-          bookingReference: booking.referenceNumber,
-          paystackReference: payment.paystackReference,
-          paidAt: payment.paidAt,
-          amountNgn: Number(payment.amountNgn),
-          bookingCreatedAt: booking.createdAt,
-          travelers: travelers.map((traveler) => ({
-            firstName: traveler.firstName,
-            lastName: traveler.lastName,
-            email: traveler.email || '—',
-            phone: traveler.phone || '—',
-            isPrimary: traveler.isPrimary,
-          })),
-          items: booking.items ?? [],
-          destinationGroups,
-          destinationsSummary: buildDestinationsSummary(destinationGroups),
-          totalAmountNgn: Number(booking.totalAmountNgn),
-        },
-        [
-          {
-            filename: `receipt-${booking.referenceNumber}.pdf`,
-            content: pdfAttachment,
-          },
-        ],
+        context,
+        attachments.length > 0 ? attachments : undefined,
       );
     } catch (error) {
       const err = error as Error;
@@ -224,6 +244,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the travelers after the payment is confirmed
   async sendTravelerNotifications(booking: Booking, payment: Payment, ownerEmail: string) {
     const travelers = (booking.travelers ?? []) as BookingTraveler[];
     const destinationGroups = buildDestinationGroupsForEmail(booking.items ?? []);
@@ -255,6 +276,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to reset their password
   async sendPasswordReset(user: User, token: string) {
     try {
       await this.sendTemplate(user.email, 'Reset your Starlings password', 'password-reset', {
@@ -268,6 +290,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to update their booking status
   async sendBookingStatusUpdate(user: User, booking: Booking) {
     try {
       await this.sendTemplate(
@@ -286,6 +309,7 @@ export class MailService {
     }
   }
 
+  //this is for sending the email to the user to confirm that we have received their message
   async sendContactAutoReply(submission: ContactSubmission) {
     try {
       await this.sendTemplate(
@@ -300,6 +324,7 @@ export class MailService {
     }
   }
 
+  //this is for sending a custom HTML email
   async sendHtmlEmail(to: string, subject: string, html: string) {
     try {
       await this.sendWithResend(to, subject, html);
@@ -310,6 +335,7 @@ export class MailService {
     }
   }
 
+  //this is for sending an alert to the admin
   async sendAdminAlert(type: string, payload: Record<string, unknown>) {
     try {
       const adminEmail = this.config.getOrThrow<string>('ADMIN_EMAIL');
