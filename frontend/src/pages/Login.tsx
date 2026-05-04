@@ -118,7 +118,9 @@ export function Login() {
         }
         left={(
           <div className="relative w-full min-h-[min(70vh,560px)] lg:min-h-[calc(100vh-8rem)]">
-            <p className="absolute left-0 top-0 font-display text-2xl italic text-white/95">Starlings</p>
+            <Link to="/" className="block">
+            <p className="font-display text-2xl italic text-white/95">Starlings Hospitality</p>
+            </Link>
             <div className="absolute bottom-0 left-0 right-0 max-w-lg space-y-5">
               <h2 className="font-display text-3xl font-semibold leading-tight text-white lg:text-[2.1rem]">
                 Welcome Back to the Gilded Collection
@@ -162,7 +164,7 @@ export function Login() {
                 id="login-email"
                 type="email"
                 autoComplete="email"
-                placeholder="concierge@starlings.com"
+                placeholder="info@starlingshsp.com"
                 className={`${inputUnderline} border-b border-[#d1d5db] focus:border-[#785a00] ${errors.email ? 'border-red-400 focus:border-red-400' : ''}`}
                 aria-invalid={errors.email ? 'true' : 'false'}
                 {...register('email')}

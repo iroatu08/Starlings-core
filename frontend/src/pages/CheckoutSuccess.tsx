@@ -1,7 +1,9 @@
 import { Link, useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, BookOpen, CheckCircle2, Headphones } from 'lucide-react'
 import { SeoHelmet } from '../components/shared/SeoHelmet'
+import { paymentsApi } from '../api/payments.api'
 
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2000&q=80'
@@ -11,6 +13,19 @@ const SIDE_IMAGE =
 export function CheckoutSuccess() {
   const [params] = useSearchParams()
   const ref = params.get('reference') || params.get('trxref')
+
+  /** Confirms payment when landing with ?reference= / ?trxref= (covers redirect flows or if inline verify errored). */
+  useEffect(() => {
+    const reference = params.get('reference') || params.get('trxref')
+    if (!reference) return
+    const storageKey = `stl-checkout-verify:${reference}`
+    if (sessionStorage.getItem(storageKey)) return
+    sessionStorage.setItem(storageKey, '1')
+    void paymentsApi.verify(reference).catch((err: unknown) => {
+      sessionStorage.removeItem(storageKey)
+      console.error('Checkout success: payment verify', err)
+    })
+  }, [params])
 
   return (
     <>

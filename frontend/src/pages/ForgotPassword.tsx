@@ -100,7 +100,7 @@ export function ForgotPassword() {
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <a
-                  href="mailto:info@starlings.com"
+                  href="mailto:info@starlingshsp.com"
                   className="flex items-center justify-center gap-2 rounded-md border border-[#E5E7EB] bg-white py-3.5 text-sm text-[#374151] hover:bg-gray-50 transition-colors"
                 >
                   <MessageCircle size={18} strokeWidth={1.5} className="text-[#6B7280]" aria-hidden />
@@ -144,7 +144,7 @@ export function ForgotPassword() {
                 id="forgot-email"
                 type="email"
                 autoComplete="email"
-                placeholder="concierge@starlings.luxury"
+                  placeholder="info@starlingshsp.com"
                 className={`${inputUnderline} border-[#D1D5DB] focus:border-[#A88F5E] ${errors.email ? 'border-red-400' : ''}`}
                 aria-invalid={errors.email ? 'true' : 'false'}
                 {...register('email')}
