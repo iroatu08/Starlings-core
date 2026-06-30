@@ -8,6 +8,7 @@ import { Footer } from './components/shared/Footer'
 import { CartDrawer } from './components/shared/CartDrawer'
 import { AppRouter } from './router'
 import { Toaster } from './components/ui/toaster'
+import { usePageView } from './hooks/usePageView'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,6 +21,7 @@ const queryClient = new QueryClient({
 
 function AppShell() {
   const { pathname } = useLocation()
+  usePageView()
   const hideChrome =
     pathname === '/register'
     || pathname === '/login'

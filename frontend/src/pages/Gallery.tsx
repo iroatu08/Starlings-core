@@ -33,6 +33,8 @@ function GalleryImageTile({
         <img
           src={`${url}${url.includes('?') ? '&' : '?'}w=600&q=70`}
           alt={alt}
+          width={600}
+          height={450}
           loading="lazy"
           decoding="async"
           onLoad={() => setLoaded(true)}
@@ -135,8 +137,8 @@ export function Gallery() {
               <span className="italic">Sublime</span> Moments.
             </h1>
             <p className="max-w-xl font-sans text-lg leading-relaxed text-[#45464e]">
-              Explore our curated collection of extraordinary stays across the globe. From the Haussmann facades of Paris
-              to the shimmering skylines of Dubai.
+              Lifestyle moments from our experiences across Nigeria, Ghana, and the UK — uploaded and curated by the
+              Starlings team.
             </p>
           </div>
         </section>

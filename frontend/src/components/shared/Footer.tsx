@@ -12,7 +12,7 @@ const socialLinks: ReadonlyArray<{ href: string; label: string; Icon: LucideIcon
 ]
 
 const exploreLinks = [
-  { label: 'Destinations', href: '/destinations' },
+  { label: 'Experiences', href: '/destinations' },
   { label: 'Services', href: '/services' },
   { label: 'Gallery', href: '/gallery' },
 ]
@@ -35,7 +35,8 @@ export function Footer() {
               <img src={Logo} alt="Starlings" className="h-12 w-auto object-contain brightness-0 invert" />
             </Link>
             <p className="font-sans text-sm leading-relaxed tracking-wide text-stone-400">
-              Elevating the art of travel in Dubai. Curating bespoke journeys for the modern connoisseur.
+              Curated hospitality experiences across Nigeria, Ghana, and the UK — concierge-led from planning to
+              checkout.
             </p>
           </div>
 
@@ -91,7 +92,7 @@ export function Footer() {
 
         <div className="mt-24 flex flex-col items-center justify-between gap-8 border-t border-white/10 pt-12 md:flex-row md:items-start">
           <p className="text-center font-sans text-sm tracking-wide text-stone-400 md:text-left">
-            © {year} Starlings Hospitality Dubai. All rights reserved.
+            © {year} Starlings Hospitality. All rights reserved.
           </p>
           <nav aria-label="Social media" className="flex items-center gap-6 text-white md:gap-8">
             {socialLinks.map(({ href, label, Icon }) => (

@@ -9,6 +9,7 @@ import { cartApi } from '../api/cart.api'
 import { formatCurrency } from '../utils/formatCurrency'
 import type { Destination, Package } from '../types/destination.types'
 import { getCountryFlag } from '../utils/countryFlags'
+import { getDestinationHeroImage } from '../utils/destination-image.util'
 import { toast } from '../hooks/use-toast'
 import { useAuthStore } from '../stores/authStore'
 import { useCartStore } from '../stores/cartStore'
@@ -89,7 +90,7 @@ export function GetStarted() {
   const curatedCards = useMemo<ExploreCard[]>(() => {
     return destinations.slice(0, 3).map((d) => ({
       title: d.name,
-      image: d.heroImageUrl ?? HERO_IMAGE,
+      image: getDestinationHeroImage(d),
       tag: d.country,
     }))
   }, [destinations])
@@ -232,17 +233,23 @@ export function GetStarted() {
               Start Your Journey
             </p>
             <h1 className="mb-6 font-display text-5xl leading-tight tracking-tight text-[#041534] lg:text-7xl">
-              The Dubai <br />
-              Curated for You
+              Your experience, <br />
+              curated for you
             </h1>
             <p className="max-w-lg font-sans text-lg leading-relaxed text-[#45464e]">
-              Embark on a journey where luxury meets precision. From visa facilitation to bespoke city tours, let our
-              team craft an experience without detail compromise.
+              From visa support to bespoke city experiences — build your package across Nigeria, Ghana, and the UK
+              with transparent pricing at every step.
             </p>
           </div>
           <div className="relative col-span-12 lg:col-span-6">
             <div className="aspect-[4/5] overflow-hidden rounded-xl bg-[#f5f3ef] shadow-2xl">
-              <img src={activeDestination?.heroImageUrl || HERO_IMAGE} alt="Dubai skyline" className="h-full w-full object-cover" />
+              <img
+                src={activeDestination ? getDestinationHeroImage(activeDestination) : HERO_IMAGE}
+                alt={activeDestination?.name ?? 'Curated travel experience'}
+                width={800}
+                height={1000}
+                className="h-full w-full object-cover"
+              />
             </div>
             <div className="absolute -bottom-8 left-6 rounded-sm bg-[#785a00] px-6 py-3 text-white shadow-lg">
               <p className="font-sans text-2xl font-semibold leading-none">{selected.length || 1}x</p>
@@ -254,8 +261,10 @@ export function GetStarted() {
         <section className="mx-auto mb-20 max-w-screen-2xl px-6 md:px-12">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h2 className="font-display text-4xl text-[#041534]">Interactive City Explorations</h2>
-              <p className="mt-2 font-sans text-sm text-[#45464e]">Select a destination to preview tailored Dubai offers.</p>
+              <h2 className="font-display text-4xl text-[#041534]">Choose your experience</h2>
+              <p className="mt-2 font-sans text-sm text-[#45464e]">
+                Select a destination to preview tailored packages and pricing.
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

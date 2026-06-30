@@ -1,50 +1,71 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const HERO_SLIDES = [
   {
     id: 1,
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuDm30t-xuFW4S9hUYwnD8yIh0mBwR5ssRlpkYsIDD4HScaLm9zN3clCPR6yycQAi8M4n6Y_660QvkAHdFGRIca-1sUW-XoKbIQXAfzZBfOt0b-oI8t6GAC4S8Ig21lWVWCegd1ebK1TAef3IZLBQqLdYD9vWqyYwVkwlsa01HS2KgkwExslXCXC9_wwO68yNpDsZ0hsdqqh70Xsp26Dd9X0Zo72l0IlVqWAYhqUKU96Ue9ezKKv2xGRhmTz4UXNiEM5946ENrNIrejj',
-    alt: 'Dubai skyline at twilight',
+    image: 'https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=1920&h=1080&fit=crop&q=80',
+    alt: 'Friends enjoying a cultural experience abroad',
+    width: 1920,
+    height: 1080,
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=1920&q=80',
-    alt: 'Luxury travel destination',
+    image: 'https://images.unsplash.com/photo-1539650116574-75c0c570d860?w=1920&h=1080&fit=crop&q=80',
+    alt: 'Travelers exploring a vibrant coastal city',
+    width: 1920,
+    height: 1080,
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1920&q=80',
-    alt: 'Paris skyline',
+    image: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=1920&h=1080&fit=crop&q=80',
+    alt: 'Guests walking through a historic UK neighbourhood',
+    width: 1920,
+    height: 1080,
   },
-]
+] as const;
 
+const LCP_IMAGE = HERO_SLIDES[0].image;
+
+/**
+ * Full-viewport hero carousel with conversion-focused CTAs.
+ */
 export function HeroCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [direction, setDirection] = useState(1)
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
 
-  const goTo = (index: number, dir: number) => {
-    setDirection(dir)
-    setCurrentIndex(index)
-  }
+  const goTo = (index: number, dir: number): void => {
+    setDirection(dir);
+    setCurrentIndex(index);
+  };
+
+  useEffect(() => {
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'image';
+    link.href = LCP_IMAGE;
+    document.head.appendChild(link);
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      setDirection(1)
-      setCurrentIndex((i) => (i + 1) % HERO_SLIDES.length)
-    }, 7000)
-    return () => window.clearInterval(id)
-  }, [])
+      setDirection(1);
+      setCurrentIndex((i) => (i + 1) % HERO_SLIDES.length);
+    }, 7000);
+    return () => window.clearInterval(id);
+  }, []);
 
-  const slide = HERO_SLIDES[currentIndex]
+  const slide = HERO_SLIDES[currentIndex];
 
   const variants = {
     enter: (dir: number) => ({ x: dir > 0 ? '100%' : '-100%', opacity: 0 }),
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? '-100%' : '100%', opacity: 0 }),
-  }
+  };
 
   return (
     <section className="relative h-screen min-h-[600px] w-full overflow-hidden">
@@ -59,11 +80,17 @@ export function HeroCarousel() {
           transition={{ duration: 0.75, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="absolute inset-0 z-0"
         >
-          <img
-            src={slide.image}
-            alt={slide.alt}
-            className="h-full w-full object-cover"
-          />
+          <div className="relative h-full w-full aspect-[16/9] min-h-full">
+            <img
+              src={slide.image}
+              alt={slide.alt}
+              width={slide.width}
+              height={slide.height}
+              fetchPriority={currentIndex === 0 ? 'high' : 'auto'}
+              decoding={currentIndex === 0 ? 'sync' : 'async'}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </div>
           <div
             className="absolute inset-0 bg-gradient-to-b from-[#041534]/40 via-[#041534]/50 to-[#041534]/85"
             aria-hidden
@@ -78,20 +105,21 @@ export function HeroCarousel() {
           <span className="italic text-[#fdce5d]">become reality</span>
         </h1>
         <p className="mt-8 max-w-2xl text-xl font-light tracking-wide text-white/80 md:text-2xl">
-          Experience the pinnacle of luxury hospitality in Dubai and beyond, curated by Starlings.
+          Curated experiences across Nigeria, Ghana, and the UK — show up, enjoy, and let your concierge
+          handle every detail.
         </p>
         <div className="mt-12 flex flex-wrap justify-center gap-4">
           <Link
-            to="/destinations"
+            to="/get-started"
             className="rounded-lg bg-[#fdce5d] px-8 py-4 font-sans font-bold tracking-wider text-[#745700] transition-all hover:bg-white"
           >
-            DISCOVER MORE
+            START YOUR EXPERIENCE
           </Link>
           <Link
-            to="/gallery"
+            to="/destinations"
             className="rounded-lg border border-white/30 bg-white/5 px-8 py-4 font-sans font-bold tracking-wider text-white backdrop-blur-md transition-all hover:bg-white/10"
           >
-            VIEW GALLERY
+            BROWSE EXPERIENCES
           </Link>
         </div>
       </div>
@@ -108,5 +136,5 @@ export function HeroCarousel() {
         ))}
       </div>
     </section>
-  )
+  );
 }
