@@ -8,7 +8,7 @@ import { useAuth } from '../../features/auth/useAuth'
 import { Logo } from '../../images'
 
 const CENTER_LINKS = [
-  { label: 'Destinations', href: '/destinations' },
+  { label: 'Experiences', href: '/destinations' },
   { label: 'Services', href: '/services' },
   { label: 'Gallery', href: '/gallery' },
   { label: 'About Us', href: '/about' },

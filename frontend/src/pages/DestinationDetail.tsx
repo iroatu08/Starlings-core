@@ -11,6 +11,7 @@ import { destinationsApi } from '../api/destinations.api'
 import { reviewsApi } from '../api/reviews.api'
 import { formatCurrency } from '../utils/formatCurrency'
 import { getDestinationMapCenter } from '../utils/destinationMapCenter'
+import { getDestinationHeroImage } from '../utils/destination-image.util'
 import { useAuthStore } from '../stores/authStore'
 import { useCart } from '../features/cart/useCart'
 
@@ -147,16 +148,20 @@ export function DestinationDetail() {
     })
   }
 
+  const heroImage = getDestinationHeroImage(destination)
+
   return (
     <>
-      <SeoHelmet title={destination.name} description={destination.description} image={destination.heroImageUrl} />
+      <SeoHelmet title={destination.name} description={destination.description} image={heroImage} />
 
       {/* Hero */}
       <div className="relative h-[65vh] min-h-[400px] overflow-hidden">
         <img
-          src={destination.heroImageUrl || 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=1920&q=80'}
+          src={heroImage}
           alt={destination.name}
-          className="w-full h-full object-cover"
+          width={1920}
+          height={1080}
+          className="h-full w-full object-cover"
         />
         <div className="absolute inset-0 hero-gradient" />
         <div className="absolute inset-0 bg-navy/40" />
@@ -164,7 +169,7 @@ export function DestinationDetail() {
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12">
           <div className="container-custom">
             <Link to="/destinations" className="inline-flex items-center gap-2 text-white/70 hover:text-white text-sm mb-4 transition-colors">
-              <ArrowLeft size={16} /> Back to Destinations
+              <ArrowLeft size={16} /> Back to Experiences
             </Link>
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
               <span className="inline-block bg-gold text-white text-xs font-semibold px-3 py-1 rounded-full mb-3">

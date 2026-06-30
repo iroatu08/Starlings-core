@@ -4,6 +4,7 @@ import { Clock, Plane } from 'lucide-react'
 import type { Destination } from '../../types/destination.types'
 import { formatCurrency } from '../../utils/formatCurrency'
 import { getCountryFlag } from '../../utils/countryFlags'
+import { getDestinationHeroImage } from '../../utils/destination-image.util'
 
 interface DestinationCardProps {
   destination: Destination
@@ -12,6 +13,7 @@ interface DestinationCardProps {
 
 export function DestinationCard({ destination, index = 0 }: DestinationCardProps) {
   const flag = getCountryFlag(destination.country)
+  const imageUrl = getDestinationHeroImage(destination)
   const quickBookTo = `/get-started?destination=${encodeURIComponent(destination.id)}`
 
   return (
@@ -28,10 +30,13 @@ export function DestinationCard({ destination, index = 0 }: DestinationCardProps
       >
         <div className="relative h-52 sm:h-60 overflow-hidden">
           <img
-            src={destination.heroImageUrl || 'https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800&q=80'}
+            src={imageUrl}
             alt={destination.name}
+            width={800}
+            height={480}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent" />
 
