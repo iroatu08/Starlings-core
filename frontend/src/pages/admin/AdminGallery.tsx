@@ -30,6 +30,7 @@ export function AdminGallery() {
   const [destinationId, setDestinationId] = useState('')
   const [altText, setAltText] = useState('')
   const [isDragOverDropZone, setIsDragOverDropZone] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [imagePendingDelete, setImagePendingDelete] = useState<{
     id: string
     previewLabel: string
@@ -62,7 +63,13 @@ export function AdminGallery() {
       fd.append('file', file)
       if (destinationId) fd.append('destinationId', destinationId)
       if (altText) fd.append('altText', altText)
-      return adminApi.uploadGallery(fd)
+      return adminApi.uploadGallery(fd, (event) => {
+        if (!event.total) return
+        setUploadProgress(Math.round((event.loaded * 100) / event.total))
+      })
+    },
+    onMutate: () => {
+      setUploadProgress(0)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['gallery-admin'] })
@@ -75,7 +82,14 @@ export function AdminGallery() {
         variant: 'success',
       })
     },
+    onSettled: () => {
+      setUploadProgress(0)
+    },
   })
+
+  // Once the browser→server transfer hits 100%, Cloudinary processing continues
+  // server-side with no further progress events — show an indeterminate state.
+  const isProcessingOnServer = uploadMutation.isPending && uploadProgress >= 100
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => adminApi.deleteGalleryImage(id),
@@ -269,8 +283,29 @@ export function AdminGallery() {
                 </p>
               </div>
               {uploadMutation.isPending && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-[14px] bg-white/80 backdrop-blur-[2px]">
-                  <span className="text-sm font-semibold text-navy">Uploading…</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-[14px] bg-white/85 px-6 backdrop-blur-[2px]">
+                  <span className="text-sm font-semibold text-navy">
+                    {isProcessingOnServer ? 'Processing…' : `Uploading… ${uploadProgress}%`}
+                  </span>
+                  <div
+                    className="h-2 w-full max-w-[16rem] overflow-hidden rounded-full bg-navy/10"
+                    role="progressbar"
+                    aria-label="Upload progress"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={isProcessingOnServer ? undefined : uploadProgress}
+                  >
+                    <div
+                      className={[
+                        'h-full rounded-full bg-gold transition-all duration-200 ease-out',
+                        isProcessingOnServer ? 'w-full animate-pulse' : '',
+                      ].join(' ')}
+                      style={isProcessingOnServer ? undefined : { width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  {isProcessingOnServer && (
+                    <span className="text-xs text-slate">Finalizing on the server…</span>
+                  )}
                 </div>
               )}
             </div>

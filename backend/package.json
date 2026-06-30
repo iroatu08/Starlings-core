@@ -20,6 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:generate": "npm run build && typeorm migration:generate -d dist/data-source.js",
     "migration:run": "npm run build && typeorm migration:run -d dist/data-source.js",
+    "migration:run:prod": "typeorm migration:run -d dist/data-source.js",
+    "deploy:build": "npm run build && npm run migration:run:prod",
     "migration:revert": "npm run build && typeorm migration:revert -d dist/data-source.js",
     "migration:run:dev": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
     "migration:revert:dev": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:revert -d src/data-source.ts",

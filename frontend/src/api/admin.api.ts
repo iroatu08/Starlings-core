@@ -6,6 +6,7 @@ import type { Package } from '../types/destination.types'
 import type { User } from '../types/auth.types'
 import type { GalleryImage } from '../types/destination.types'
 import { PaymentStatus } from '../types/payment.types'
+import type { AxiosProgressEvent } from 'axios'
 
 export interface AdminStats {
   totalBookings: number
@@ -101,9 +102,13 @@ export const adminApi = {
 
   deletePackage: (destinationId: string, id: string) => apiClient.delete(`/admin/destinations/${destinationId}/packages/${id}`),
 
-  uploadGallery: (formData: FormData) =>
+  uploadGallery: (
+    formData: FormData,
+    onUploadProgress?: (event: AxiosProgressEvent) => void,
+  ) =>
     apiClient.post<{ data: GalleryImage }>('/admin/gallery/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress,
     }),
 
   deleteGalleryImage: (id: string) => apiClient.delete(`/admin/gallery/${id}`),
