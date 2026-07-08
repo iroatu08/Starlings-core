@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SeoHelmet } from '../../components/shared/SeoHelmet'
 import { adminApi } from '../../api/admin.api'
@@ -23,6 +23,13 @@ export function AdminPayments() {
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [search, setSearch] = useState('')
+  const [rejectModalRequest, setRejectModalRequest] = useState<{
+    id: string
+    referenceNumber: string
+    requesterEmail: string
+  } | null>(null)
+  const [rejectReason, setRejectReason] = useState('')
+  const [rejectFormError, setRejectFormError] = useState('')
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery({
@@ -63,8 +70,45 @@ export function AdminPayments() {
     mutationFn: ({ id, reason }: { id: string; reason: string }) => adminApi.rejectRefundRequest(id, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-refund-requests'] })
+      setRejectModalRequest(null)
+      setRejectReason('')
+      setRejectFormError('')
+    },
+    onError: () => {
+      setRejectFormError('Could not reject this refund request. Please try again.')
     },
   })
+
+  useEffect(() => {
+    if (!rejectModalRequest) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !rejectRefundMutation.isPending) {
+        setRejectModalRequest(null)
+        setRejectReason('')
+        setRejectFormError('')
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [rejectModalRequest, rejectRefundMutation.isPending])
+
+  const closeRejectModal = (): void => {
+    if (rejectRefundMutation.isPending) return
+    setRejectModalRequest(null)
+    setRejectReason('')
+    setRejectFormError('')
+  }
+
+  const submitRejectRefund = (): void => {
+    const trimmedReason = rejectReason.trim()
+    if (!rejectModalRequest) return
+    if (!trimmedReason) {
+      setRejectFormError('Please provide a reason for rejecting this refund request.')
+      return
+    }
+    setRejectFormError('')
+    rejectRefundMutation.mutate({ id: rejectModalRequest.id, reason: trimmedReason })
+  }
 
   const rows = useMemo(() => {
     if (!data?.payments?.length) return []
@@ -270,9 +314,13 @@ export function AdminPayments() {
                               type='button'
                               disabled={rejectRefundMutation.isPending}
                               onClick={() => {
-                                const reason = window.prompt('Reason for rejection?')
-                                if (!reason?.trim()) return
-                                rejectRefundMutation.mutate({ id: request.id, reason })
+                                setRejectReason('')
+                                setRejectFormError('')
+                                setRejectModalRequest({
+                                  id: request.id,
+                                  referenceNumber: request.booking?.referenceNumber || request.bookingId,
+                                  requesterEmail: request.user?.email || request.userId,
+                                })
                               }}
                               className='rounded border border-red-300 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60'
                             >
@@ -291,6 +339,69 @@ export function AdminPayments() {
           )}
         </div>
       </div>
+
+      {rejectModalRequest && (
+        <div
+          className='fixed inset-0 z-[100] !mt-0 flex items-center justify-center bg-navy/50 p-4 backdrop-blur-sm'
+          role='presentation'
+          onClick={closeRejectModal}
+        >
+          <div
+            role='dialog'
+            aria-modal='true'
+            aria-labelledby='reject-refund-title'
+            className='w-full max-w-md space-y-4 rounded-2xl border border-border bg-white p-6 shadow-lg'
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id='reject-refund-title' className='font-display text-lg font-bold text-navy'>
+              Reject refund request
+            </h2>
+            <p className='text-sm text-slate'>
+              Booking{' '}
+              <span className='font-mono font-semibold text-navy'>{rejectModalRequest.referenceNumber}</span>
+              {' '}from <span className='font-semibold text-navy'>{rejectModalRequest.requesterEmail}</span>.
+              Provide a reason the customer will see in the rejection record.
+            </p>
+            {rejectFormError && (
+              <p className='rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700' role='alert'>
+                {rejectFormError}
+              </p>
+            )}
+            <div>
+              <label htmlFor='reject-refund-reason' className='label-field'>
+                Rejection reason
+              </label>
+              <textarea
+                id='reject-refund-reason'
+                rows={4}
+                value={rejectReason}
+                onChange={(event) => setRejectReason(event.target.value)}
+                disabled={rejectRefundMutation.isPending}
+                placeholder='Explain why this refund request is being rejected…'
+                className='input-field resize-y'
+              />
+            </div>
+            <div className='flex flex-wrap justify-end gap-2 pt-2'>
+              <button
+                type='button'
+                disabled={rejectRefundMutation.isPending}
+                onClick={closeRejectModal}
+                className='btn-outline text-sm'
+              >
+                Cancel
+              </button>
+              <button
+                type='button'
+                disabled={rejectRefundMutation.isPending}
+                onClick={submitRejectRefund}
+                className='rounded-lg bg-red-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50'
+              >
+                {rejectRefundMutation.isPending ? 'Rejecting…' : 'Reject request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

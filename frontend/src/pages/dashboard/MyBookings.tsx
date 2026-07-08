@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SeoHelmet } from '../../components/shared/SeoHelmet'
@@ -16,6 +17,13 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
 
 export function MyBookings() {
   const queryClient = useQueryClient()
+  const [refundModalBooking, setRefundModalBooking] = useState<{
+    id: string
+    referenceNumber: string
+  } | null>(null)
+  const [refundReason, setRefundReason] = useState('')
+  const [refundFormError, setRefundFormError] = useState('')
+
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ['bookings'],
     queryFn: () => bookingsApi.getMyBookings().then((r) => r.data.data),
@@ -32,8 +40,45 @@ export function MyBookings() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] })
       queryClient.invalidateQueries({ queryKey: ['admin-refund-requests'] })
+      setRefundModalBooking(null)
+      setRefundReason('')
+      setRefundFormError('')
+    },
+    onError: () => {
+      setRefundFormError('Could not submit your refund request. Please try again.')
     },
   })
+
+  useEffect(() => {
+    if (!refundModalBooking) return
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !requestRefundMutation.isPending) {
+        setRefundModalBooking(null)
+        setRefundReason('')
+        setRefundFormError('')
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [refundModalBooking, requestRefundMutation.isPending])
+
+  const closeRefundModal = (): void => {
+    if (requestRefundMutation.isPending) return
+    setRefundModalBooking(null)
+    setRefundReason('')
+    setRefundFormError('')
+  }
+
+  const submitRefundRequest = (): void => {
+    const trimmedReason = refundReason.trim()
+    if (!refundModalBooking) return
+    if (!trimmedReason) {
+      setRefundFormError('Please explain why you are requesting a refund.')
+      return
+    }
+    setRefundFormError('')
+    requestRefundMutation.mutate({ bookingId: refundModalBooking.id, reason: trimmedReason })
+  }
 
   const hasPaymentInitialized = (booking: (typeof bookings)[number]): boolean => {
     return Boolean(booking.payment)
@@ -156,9 +201,12 @@ export function MyBookings() {
                           type="button"
                           disabled={requestRefundMutation.isPending}
                           onClick={() => {
-                            const reason = window.prompt('Why are you requesting a refund?')
-                            if (!reason?.trim()) return
-                            requestRefundMutation.mutate({ bookingId: booking.id, reason })
+                            setRefundReason('')
+                            setRefundFormError('')
+                            setRefundModalBooking({
+                              id: booking.id,
+                              referenceNumber: booking.referenceNumber,
+                            })
                           }}
                           className="rounded-sm border border-red-300 px-4 py-2 text-xs font-bold uppercase tracking-widest text-red-700 transition-all hover:bg-red-50 disabled:opacity-60"
                         >
@@ -177,6 +225,68 @@ export function MyBookings() {
           </ul>
         )}
       </div>
+
+      {refundModalBooking && (
+        <div
+          className="fixed inset-0 z-[100] !mt-0 flex items-center justify-center bg-navy/50 p-4 backdrop-blur-sm"
+          role="presentation"
+          onClick={closeRefundModal}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="refund-request-title"
+            className="w-full max-w-md space-y-4 rounded-2xl border border-border bg-white p-6 shadow-lg"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <h2 id="refund-request-title" className="font-display text-lg font-bold text-navy">
+              Request a refund
+            </h2>
+            <p className="text-sm text-slate">
+              Booking{' '}
+              <span className="font-mono font-semibold text-navy">{refundModalBooking.referenceNumber}</span>
+              . Tell us why you are requesting a refund and our team will review it.
+            </p>
+            {refundFormError && (
+              <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                {refundFormError}
+              </p>
+            )}
+            <div>
+              <label htmlFor="refund-reason" className="label-field">
+                Reason for refund
+              </label>
+              <textarea
+                id="refund-reason"
+                rows={4}
+                value={refundReason}
+                onChange={(event) => setRefundReason(event.target.value)}
+                disabled={requestRefundMutation.isPending}
+                placeholder="Explain what went wrong or why you need a refund…"
+                className="input-field resize-y"
+              />
+            </div>
+            <div className="flex flex-wrap justify-end gap-2 pt-2">
+              <button
+                type="button"
+                disabled={requestRefundMutation.isPending}
+                onClick={closeRefundModal}
+                className="btn-outline text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={requestRefundMutation.isPending}
+                onClick={submitRefundRequest}
+                className="rounded-lg bg-red-700 px-6 py-3 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {requestRefundMutation.isPending ? 'Submitting…' : 'Submit request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
