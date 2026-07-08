@@ -38,6 +38,8 @@ export function DestinationDetail() {
   const [reviewFormError, setReviewFormError] = useState('')
   const [selectedPackageIds, setSelectedPackageIds] = useState<string[]>([])
 
+
+
   useEffect(() => {
     const proto = L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown }
     delete proto._getIconUrl
@@ -380,16 +382,7 @@ export function DestinationDetail() {
                     <span className="font-semibold text-navy">${destination.priceFromUsd.toLocaleString()}</span>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    void addCustomizedBundleToCart()
-                  }}
-                  disabled={isAddingItem || selectedPackageIds.length === 0}
-                  className="btn-primary mt-6 w-full text-center disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isAddingItem ? 'Adding...' : 'Add Customized Bundle to Cart'}
-                </button>
+              
               </div>
             </div>
           </div>
@@ -416,20 +409,22 @@ export function DestinationDetail() {
                         <p className="mt-1 text-sm text-slate">{pkg.description}</p>
                         <p className="mt-2 text-sm font-semibold text-[#785a00]">{formatCurrency(pkg.priceNgn, 'NGN')}</p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => togglePackage(pkg.id)}
-                        disabled={isLocked}
-                        className={`rounded-sm px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-                          isLocked
-                            ? 'cursor-not-allowed bg-slate-100 text-slate-400'
-                            : isSelected
-                              ? 'bg-[#041534] text-white'
-                              : 'border border-[#041534]/30 text-[#041534]'
-                        }`}
+                      <label
+                        htmlFor={`package-${pkg.id}`}
+                        className={`custom-checkbox ${isLocked ? 'custom-checkbox--disabled' : ''}`}
                       >
-                        {isLocked ? 'Required' : isSelected ? 'Included' : 'Removed'}
-                      </button>
+                        <input
+                          id={`package-${pkg.id}`}
+                          type="checkbox"
+                          checked={isSelected}
+                          disabled={isLocked}
+                          onChange={() => togglePackage(pkg.id)}
+                        />
+                        <span className="checkmark" aria-hidden />
+                        <span className="custom-checkbox__label">
+                          {isLocked ? 'Required' : isSelected ? 'Included' : 'Removed'}
+                        </span>
+                      </label>
                     </div>
                   </div>
                 )
@@ -439,6 +434,17 @@ export function DestinationDetail() {
               <p className="text-sm text-slate">Running total</p>
               <p className="font-display text-2xl text-[#041534]">{formatCurrency(runningTotalNgn, 'NGN')}</p>
             </div>
+
+            <button
+                  type="button"
+                  onClick={() => {
+                    void addCustomizedBundleToCart()
+                  }}
+                  disabled={isAddingItem || selectedPackageIds.length === 0}
+                  className="btn-primary mt-6 w-fit text-center ml-auto flex disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isAddingItem ? 'Adding...' : 'Add Customized Bundle to Cart'}
+                </button>
           </div>
         </section>
       )}
