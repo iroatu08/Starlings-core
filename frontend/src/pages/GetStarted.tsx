@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowRight, Check, Mail, Phone } from 'lucide-react'
+import { ArrowRight, Check, Mail, MessageCircle, Phone } from 'lucide-react'
 import { SeoHelmet } from '../components/shared/SeoHelmet'
 import { destinationsApi } from '../api/destinations.api'
 import { contactApi } from '../api/contact.api'
@@ -233,12 +233,12 @@ export function GetStarted() {
               Start Your Journey
             </p>
             <h1 className="mb-6 font-display text-5xl leading-tight tracking-tight text-[#041534] lg:text-7xl">
-              Your experience, <br />
-              curated for you
+              Your Experience, <br />
+              Curated for You
             </h1>
             <p className="max-w-lg font-sans text-lg leading-relaxed text-[#45464e]">
-              From visa support to bespoke city experiences — build your package across Nigeria, Ghana, and the UK
-              with transparent pricing at every step.
+              Build a trip that's tailored to you. Choose your destination, add the services you need, and see
+              transparent pricing as you create your perfect experience.
             </p>
           </div>
           <div className="relative col-span-12 lg:col-span-6">
@@ -261,9 +261,9 @@ export function GetStarted() {
         <section className="mx-auto mb-20 max-w-screen-2xl px-6 md:px-12">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h2 className="font-display text-4xl text-[#041534]">Choose your experience</h2>
+              <h2 className="font-display text-4xl text-[#041534]">Choose Your Destination</h2>
               <p className="mt-2 font-sans text-sm text-[#45464e]">
-                Select a destination to preview tailored packages and pricing.
+              Select a destination to view available packages, inclusions, and pricing.
               </p>
             </div>
           </div>
@@ -310,7 +310,7 @@ export function GetStarted() {
                 </p>
               ) : (
                 <p className="font-sans text-sm text-[#45464e]">
-                  Showing all destinations. Pick a curated city above to focus the list — or toggle any optional add-on; required packages for that destination are added automatically and marked Required.
+                  all destinations. Pick a curated city above to focus the list — or toggle any optional add-on; required packages for that destination are added automatically and marked Required.
                 </p>
               )}
               <div className="space-y-3">
@@ -359,10 +359,10 @@ export function GetStarted() {
             </div>
             <aside className="sticky top-28 h-fit rounded-xl bg-[#041534] p-6 text-white shadow-2xl">
               <p className="mb-2 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-[#fdce5d]">
-                Estimated Investment
+                Estimated Total (NGN)
               </p>
               <div className="mb-5 border-b border-white/10 pb-5">
-                <p className="font-sans text-xs uppercase tracking-[0.16em] text-white/60">Live Total (NGN)</p>
+                <p className="font-sans text-xs uppercase tracking-[0.16em] text-white/60"></p>
                 <p className="mt-1 font-display text-3xl">{formatCurrency(totals.ngn, 'NGN')}</p>
               </div>
               <div className="mb-6">
@@ -378,7 +378,7 @@ export function GetStarted() {
                 }}
                 className="block w-full rounded-sm bg-[#785a00] py-3 text-center font-sans text-sm font-bold uppercase tracking-[0.14em] text-white transition-all hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {selected.length > 0 ? `Reserve ${selected.length} Package${selected.length > 1 ? 's' : ''}` : 'Reserve Curated Bundle'}
+                {selected.length > 0 ? `Reserve ${selected.length} Package${selected.length > 1 ? 's' : ''}` : 'Proceed to Booking'}
               </button>
             </aside>
           </div>
@@ -389,20 +389,21 @@ export function GetStarted() {
             <div className="p-8 md:p-12">
               <h2 className="font-display text-5xl leading-tight text-white">
                 Can&apos;t decide? <br />
-                Let our Concierge curate for you.
+                We'll curate it for you.
               </h2>
               <p className="mt-5 max-w-md font-sans text-sm leading-relaxed text-white/80">
-                Our experts are on hand to design the ideal itinerary based on your timeline, comfort, and taste.
-                It&apos;s a private luxury conversation.
+                Tell us what you're looking for, and we'll curate an itinerary around your schedule, preferences,
+                and budget, thoughtfully planned from start to finish.
               </p>
               <div className="mt-8 flex gap-2">
-                <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-sans text-sm text-white">
+                <a href="+234 812 322 8812"
+                className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-sans text-sm text-white">
                   <Phone size={16} />
-                  +234 812 322 8812
-                </p>
+                  Call a Travel Expert
+                </a>
                 <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 font-sans text-sm text-white">
-                  <Mail size={16} />
-                  24/7 Travel Support
+                  <MessageCircle size={16} />
+                  Chat with Our Concierge
                 </p>
               </div>
             </div>

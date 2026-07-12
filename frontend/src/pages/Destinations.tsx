@@ -123,11 +123,11 @@ export function Destinations() {
               Curated Experiences
             </span>
             <h1 className="font-display text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.1] tracking-[-0.02em] text-[#041534]">
-              Find your next experience
+              Find Your Next Experience
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[#45464e]">
-              Lifestyle-first journeys across Nigeria, Ghana, and the UK — search by country, budget, or
-              inclusions to find the right fit.
+              Explore thoughtfully curated experiences across Lagos, Abeokuta, Accra, London, Brighton, Belfast, and more.
+              Browse by destination, budget, or travel style to discover the experience that's right for you.
             </p>
           </div>
 

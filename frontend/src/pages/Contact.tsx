@@ -31,24 +31,29 @@ const INQUIRY_OPTIONS: Array<{ value: InquiryType; label: string }> = [
 
 const FAQ_ITEMS = [
   {
-    question: 'How far in advance should I book?',
-    answer:
-      'We recommend booking at least 4–6 weeks ahead for visa processing and hotel availability. Last-minute requests are welcome — our team will advise what is still possible.',
-  },
-  {
-    question: 'Can I customize my package?',
-    answer:
-      'Yes. Every experience bundle lets you keep or remove optional add-ons before checkout. For fully bespoke itineraries, select "Custom itinerary request" below.',
-  },
-  {
-    question: 'What if I need to change my plans?',
+    question: 'Do I need to know exactly where I want to travel before contacting Starlings?',
     answer:
       'Contact us as soon as possible. Our team will review your booking status and outline available options, including refunds where applicable.',
   },
   {
-    question: 'Is payment secure?',
+    question: 'Can Starlings handle my visa and travel bookings together, or are they separate services?',
+    answer:
+      'Yes. Every experience bundle lets you keep or remove optional add-ons before checkout. For fully bespoke itineraries, select "Custom itinerary request" below.',
+  },
+  {
+    question: 'How far in advance should I book, and how long does planning typically take?',
+    answer:
+      'We recommend booking at least 4–6 weeks ahead for visa processing and hotel availability. Last-minute requests are welcome — our team will advise what is still possible.',
+  },
+  {
+    question: 'Does Starlings only handle international travel?',
     answer:
       'All payments are processed through Paystack with industry-standard encryption. You receive a confirmation and receipt immediately after payment.',
+  },
+  {
+    question: 'Can I get a fully customized experience, or do I have to choose from set packages?',
+    answer:
+      'Yes. Every experience bundle lets you keep or remove optional add-ons before checkout. For fully bespoke itineraries, select "Custom itinerary request" below.',
   },
 ] as const;
 
@@ -121,10 +126,25 @@ export function Contact() {
       <section className="gradient-navy relative flex h-64 items-end overflow-hidden md:h-80">
         <div className="container-custom relative w-full pb-10">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-gold">We are here</p>
+            <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-gold">WE ARE HERE</p>
             <h1 className="font-display text-4xl font-bold text-white md:text-5xl">Contact</h1>
-            <p className="mt-3 max-w-xl text-white/70">
+            <p className="mt-3 max-w-xl text-white/80">
               Questions before you book? Our team typically responds within one business day.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="bg-white py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
+            <p className="mb-2 text-sm font-bold uppercase tracking-widest text-navy">WE ARE HERE</p>
+            <h2 className="font-display text-3xl font-bold text-navy md:text-4xl">
+              Let&apos;s Plan Your Next Experience
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-slate">
+              Whether you&apos;re planning a vacation, applying for a visa, booking flights, or simply exploring
+              your options, our team is here to help you make the right decisions.
             </p>
           </motion.div>
         </div>
@@ -133,13 +153,12 @@ export function Contact() {
       <section className="section-padding bg-off-white">
         <div className="container-custom grid max-w-6xl grid-cols-1 gap-12 lg:grid-cols-5">
           <aside className="lg:col-span-2">
-            <h2 className="mb-6 font-display text-2xl text-navy">Talk to a human</h2>
             <div className="space-y-6">
               <div className="flex items-start gap-4 rounded-xl border border-border bg-white p-5 shadow-sm">
                 <Clock className="mt-0.5 shrink-0 text-gold" size={20} />
                 <div>
                   <p className="font-semibold text-navy">Response time</p>
-                  <p className="text-sm text-slate">Within 1 business day — often sooner.</p>
+                  <p className="text-sm text-slate">Within one business day, often sooner.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-xl border border-border bg-white p-5 shadow-sm">
@@ -155,7 +174,7 @@ export function Contact() {
                 <Phone className="mt-0.5 shrink-0 text-gold" size={20} />
                 <div>
                   <p className="font-semibold text-navy">Phone</p>
-                  <p className="text-sm text-slate">Available on request after inquiry</p>
+                  <p className="text-sm text-slate">Available after your inquiry to ensure you're connected with the right specialist.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4 rounded-xl border border-border bg-white p-5 shadow-sm">
@@ -163,7 +182,7 @@ export function Contact() {
                 <div>
                   <p className="font-semibold text-navy">Before you write</p>
                   <p className="text-sm text-slate">
-                    Tell us your destination, travel dates, and what is holding you back — we will address it
+                    Tell us your destination, travel dates, and what you need help with — we'll address it
                     directly.
                   </p>
                 </div>
@@ -171,7 +190,7 @@ export function Contact() {
             </div>
 
             <div className="mt-10">
-              <h3 className="mb-4 font-display text-xl text-navy">Common questions</h3>
+              <h3 className="mb-4 font-display text-xl text-navy">Commonly Asked Questions</h3>
               <div className="space-y-3">
                 {FAQ_ITEMS.map((item, index) => (
                   <div key={item.question} className="rounded-xl border border-border bg-white shadow-sm">

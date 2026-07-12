@@ -20,10 +20,10 @@ const HERO_IMAGE =
   'https://lh3.googleusercontent.com/aida-public/AB6AXuDj4fxhfakt6BQa9E2-s7sq7rJb6LNSb-Cul_WMIjn1eLkwJo1iS04ST7bnv57NuRxnhp2ZYxFjGR4UYsad2MvDymcmx9CPCaQTgMhUTWKYyWEyxlLlY_80jUGLbjUb0YbjMCFr7DffaSHJWsQMBuZUHJe37tsPYiqz5hfYK2cJoH6r5yB0ihGAGzbAjKAclrdbxrvCz4lc_J6ecR6Ynzbr3sAxDBZWJUrLQ3CJW2U88H7YNnD1yjJBk8D6EklFfKYxx9vheYVLSxKV'
 
 const SERVICE_TABS: { id: TabId; label: string; icon: typeof FileText }[] = [
-  { id: 'visa', label: 'Visa Assistance', icon: FileText },
-  { id: 'flights', label: 'Flight Bookings', icon: Plane },
-  { id: 'hotels', label: 'Hotel Reservations', icon: Hotel },
-  { id: 'activities', label: 'Activity Packages', icon: Activity },
+  { id: 'visa', label: 'Curated Experiences', icon: FileText },
+  { id: 'flights', label: 'Hotel Reservations', icon: Plane },
+  { id: 'hotels', label: 'Flight Bookings', icon: Hotel },
+  { id: 'activities', label: 'Visa Assistance', icon: Activity },
 ]
 
 type ServiceTier = {
@@ -53,9 +53,9 @@ const SERVICE_CONTENT: Record<TabId, ServiceContent> = {
         'Discover a suite of premium hospitality services designed for the modern curator. From complex visa logistics to curated activity packages, our digital concierge ensures your journey is as seamless as it is spectacular.',
     },
     detail: {
-      title: 'Seamless Global Entry',
+      title: 'Visa Support Made Simple',
       description:
-        'Navigating the complexities of international travel documentation requires precision and local expertise. Our Visa Assistance division provides end-to-end management for tourist, business, and golden visas, ensuring your entry to Dubai and beyond is handled with white-glove care.',
+        'From visa support and flight bookings to hotel reservations and curated experiences, our concierge team handles the details so every journey feels effortless.',
     },
     steps: [
       {

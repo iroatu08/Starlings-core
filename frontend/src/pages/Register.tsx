@@ -157,8 +157,9 @@ export function Register() {
             </div>
 
             <p className="mb-10 font-light leading-relaxed text-[#45464e]">
-              Sign up in one step to reserve experiences, manage bookings, and access your concierge
-              dashboard. You can add travel preferences later from your profile.
+            Your Starlings account gives you one place to plan, book, and manage every
+            experience. Save your preferences, track your bookings, and enjoy a more
+            personalized journey.
             </p>
 
             {registerError && (

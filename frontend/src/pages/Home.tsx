@@ -16,18 +16,18 @@ import { toast } from '../hooks/use-toast';
 const USP_CARDS = [
   {
     icon: Verified,
-    title: 'Concierge-led',
-    body: 'Industry veterans who anticipate your needs — from airport pickup to your last dinner reservation.',
+    title: 'Expertly Planned',
+    body: 'Every detail is thoughtfully handled — from flights and accommodation to airport transfers and curated experiences — so your journey starts smoothly.',
   },
   {
     icon: Shield,
-    title: 'Stress-free',
-    body: 'Every transfer, timing detail, and booking handled before you arrive. You focus on the experience.',
+    title: 'Stress-Free Travel',
+    body: 'We take care of the planning, bookings, and logistics before you arrive, so you can simply relax and enjoy the experience.',
   },
   {
     icon: Sparkles,
-    title: 'Personalised',
-    body: 'No cookie-cutter itineraries. Each journey is shaped around how you want to explore and unwind.',
+    title: 'Personalised Experiences',
+    body: 'No two travellers are the same. Every itinerary is tailored to your travel style, preferences, and budget — because your experience should feel uniquely yours.',
   },
 ] as const;
 
@@ -89,15 +89,15 @@ export function Home() {
                 Live the destination
               </h2>
               <p className="mt-6 font-sans text-lg leading-relaxed text-[#45464e]">
-                Lifestyle-first journeys across Abeokuta, Lagos, Ghana, Belfast, Brighton, and London —
-                designed to connect you with people, culture, and moments that matter.
+                Thoughtfully curated experiences across Abeokuta, Lagos, Accra, Belfast, Brighton, London, 
+                and beyond — designed to help you connect with the people, culture, and character of every city.
               </p>
             </div>
             <Link
               to="/destinations"
               className="font-sans font-medium text-[#041534] underline decoration-2 underline-offset-8 decoration-[#785a00] transition-all hover:decoration-[#041534]"
             >
-              Explore all experiences
+              Explore All Experiences
             </Link>
           </div>
 
@@ -172,11 +172,12 @@ export function Home() {
               Our advantage
             </span>
             <h2 className="mt-6 font-display text-5xl leading-tight text-[#1b1c1a] md:text-7xl">
-              Why travelers choose <span className="italic text-[#785a00]">Starlings</span>
+              Travel should feel effortless <span className="italic text-[#785a00]">Starlings</span>
             </h2>
             <p className="mt-8 max-w-lg font-sans text-lg leading-relaxed text-[#45464e]">
-              We don&apos;t sell buildings — we craft experiences. From seamless transfers to perfectly timed
-              itineraries, Starlings removes friction so you can fully enjoy every moment.
+            From the moment you start planning until you’re safely back home, we thoughtfully
+coordinate your flights, stays, transfers, and experiences into one seamless
+journey—so you spend less time worrying and more time enjoying every moment
             </p>
             <Link
               to="/get-started"
@@ -211,7 +212,8 @@ export function Home() {
           <div className="max-w-md text-center md:text-left">
             <h3 className="font-display text-3xl italic text-white">Stay in the loop</h3>
             <p className="mt-2 font-sans text-white/60">
-              Exclusive experience drops, early access, and destination guides — straight to your inbox.
+              Be the first to discover new destinations, travel inspiration, helpful tips, and 
+              updated from Starlings.
             </p>
           </div>
           <form

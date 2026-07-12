@@ -123,22 +123,20 @@ export function Gallery() {
     <>
       <SeoHelmet
         title="Gallery"
-        description="Travel inspiration from destinations we love — Starlings Hospitality gallery."
+        description="See the experience — lifestyle moments from curated travel across Nigeria, Ghana, and the UK."
       />
 
       <main className="bg-[#fbf9f5] pb-24 pt-32">
         <section className="mx-auto mb-12 max-w-screen-2xl px-6 md:mb-16 md:px-12">
           <div className="max-w-3xl">
             <span className="mb-4 block font-sans text-sm font-bold uppercase tracking-[0.2em] text-[#785a00]">
-              Visual Chronicles
+              TRAVEL GALLERY
             </span>
             <h1 className="mb-8 font-display text-5xl leading-tight tracking-tight text-[#041534] md:text-7xl">
-              Capturing the <br />
-              <span className="italic">Sublime</span> Moments.
+              See the Experience
             </h1>
             <p className="max-w-xl font-sans text-lg leading-relaxed text-[#45464e]">
-              Lifestyle moments from our experiences across Nigeria, Ghana, and the UK — uploaded and curated by the
-              Starlings team.
+              Lifestyle moments from our curated experiences across Nigeria, Ghana, and the UK.
             </p>
           </div>
         </section>

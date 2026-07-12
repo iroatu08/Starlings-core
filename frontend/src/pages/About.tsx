@@ -20,13 +20,13 @@ export function About() {
     <>
       <SeoHelmet
         title="About"
-        description="Starlings Hospitality — mission, team, and partners for global curated travel."
+        description="Why Starlings exists — our vision and mission for confident, effortless travel experiences."
       />
 
       <section className="relative h-64 md:h-80 overflow-hidden gradient-navy flex items-end">
         <div className="relative container-custom pb-10 w-full">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }}>
-            <p className="text-gold text-sm font-semibold tracking-widest uppercase mb-2">Our story</p>
+            <p className="text-gold text-sm font-semibold tracking-widest uppercase mb-2">Why We Exist</p>
             <h1 className="font-display text-4xl md:text-5xl font-bold text-white">About us</h1>
           </motion.div>
         </div>
@@ -34,22 +34,41 @@ export function About() {
 
       <section className="section-padding bg-off-white">
         <div className="container-custom max-w-3xl mb-16">
-          <h2 className="font-display text-2xl font-bold text-navy mb-4">Mission</h2>
-          <p className="text-slate text-lg leading-relaxed mb-8">
-            We make international travel straightforward: clear pricing, honest timelines, and one team handling visa,
-            flights, hotels, and experiences — so you spend less time coordinating and more time exploring.
+          
+
+          <p className="text-slate text-lg leading-relaxed mb-6">
+            Experiences shape the way we see the world, yet planning them often feels unnecessarily complicated.
           </p>
+          <p className="text-slate text-lg leading-relaxed mb-6">
+            At Starlings, we believe every journey, celebration, getaway, and milestone should begin with
+            confidence — not confusion, chaos, and definitely not stress.
+          </p>
+          <p className="text-lg leading-relaxed mb-6 font-semibold text-navy">
+            That&apos;s why we exist.
+          </p>
+          <p className="text-slate text-lg leading-relaxed mb-6">
+            We bring together thoughtful planning, trusted expertise, and genuine care to create
+            experiences people can actually enjoy. Whether it&apos;s securing a visa, booking a flight, planning
+            a vacation, curating activities, or unlocking new destinations, we remove the friction so our
+            clients can focus on what truly matters — the experience itself.
+          </p>
+          <p className="text-slate text-lg leading-relaxed mb-10">
+            Today, we help people move with confidence within and across borders. Tomorrow, we&apos;re
+            building spaces, services, and experiences that inspire people to explore the world in entirely
+            new ways.
+          </p>
+
           <h2 className="font-display text-2xl font-bold text-navy mb-4">Vision</h2>
           <p className="text-slate leading-relaxed mb-8">
-            To be the hospitality partner travellers trust for France, the UK, Nigeria, the USA, the UAE, and Canada —
-            known for reliability, warmth, and trips that feel personal, not packaged.
+            To redefine how people experience the world — making every journey, destination, and
+            moment feel effortless, memorable, and deeply personal.
           </p>
-          <h2 className="font-display text-2xl font-bold text-navy mb-4">Goals</h2>
-          <ul className="list-disc pl-5 text-slate space-y-2">
-            <li>Transparent quotes in NGN and USD before you commit.</li>
-            <li>Responsive support from enquiry through departure and return.</li>
-            <li>Partners vetted for quality, safety, and value — not volume alone.</li>
-          </ul>
+
+          <h2 className="font-display text-2xl font-bold text-navy mb-4">Mission</h2>
+          <p className="text-slate leading-relaxed">
+            We&apos;re committed to creating exceptional experiences through hospitality, innovation, and
+            thoughtful service — helping people move, explore, connect, and celebrate with confidence.
+          </p>
         </div>
 
         <div className="container-custom mb-20">
