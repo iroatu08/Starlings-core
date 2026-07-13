@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowRight, Check, Mail, MessageCircle, Phone } from 'lucide-react'
+import { ArrowRight, Check, MessageCircle, Phone } from 'lucide-react'
 import { SeoHelmet } from '../components/shared/SeoHelmet'
 import { destinationsApi } from '../api/destinations.api'
 import { contactApi } from '../api/contact.api'
