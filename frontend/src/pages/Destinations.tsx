@@ -1,113 +1,118 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { ChevronDown, Star } from 'lucide-react';
+import { ChevronDown, Star, X } from 'lucide-react';
 import { SeoHelmet } from '../components/shared/SeoHelmet';
 import { destinationsApi } from '../api/destinations.api';
 import { useDebounce } from '../hooks/useDebounce';
 import type { Destination } from '../types/destination.types';
 import { formatCurrency } from '../utils/formatCurrency';
 import { getDestinationHeroImage } from '../utils/destination-image.util';
-
-const COUNTRIES = ['All', 'Nigeria', 'Ghana', 'UK'] as const;
-
-const PRICE_OPTIONS = [
-  { id: 'all', label: 'Any price', max: Infinity },
-  { id: '1m', label: 'Under ₦1M', max: 1_000_000 },
-  { id: '2m', label: 'Under ₦2M', max: 2_000_000 },
-  { id: '3m', label: 'Under ₦3M', max: 3_000_000 },
-] as const;
-
-const ACTIVITY_OPTIONS = [
-  { id: 'all', label: 'Any inclusions' },
-  { id: 'visa', label: 'Visa support' },
-  { id: 'flight', label: 'Flights' },
-  { id: 'hotel', label: 'Hotels' },
-  { id: 'activities', label: 'Activities' },
-] as const;
-
-const DURATION_OPTIONS = [
-  { id: 'all', label: 'All', max: Infinity },
-  { id: '5', label: '3-5 Days', max: 5 },
-  { id: '7', label: '7+ Days', max: 30 },
-] as const;
-
-function matchesActivity(dest: Destination, activityId: string): boolean {
-  if (activityId === 'all') return true;
-  const pkgs = dest.packages || [];
-  return pkgs.some((p) => {
-    if (activityId === 'visa') return p.includesVisa;
-    if (activityId === 'flight') return p.includesFlight;
-    if (activityId === 'hotel') return p.includesHotel;
-    if (activityId === 'activities') return p.includesActivities;
-    return true;
-  });
-}
-
-function matchesDuration(dest: Destination, maxDays: number): boolean {
-  if (maxDays === Infinity) return true;
-  const pkgs = dest.packages || [];
-  if (pkgs.length === 0) return true;
-  return pkgs.some((p) => p.durationDays <= maxDays);
-}
+import {
+  countActiveBrowseFilters,
+  DEFAULT_DESTINATION_BROWSE_FILTERS,
+  DESTINATION_COUNTRIES,
+  DURATION_FILTER_OPTIONS,
+  filterDestinations,
+  INCLUSION_FILTER_OPTIONS,
+  parseDestinationFiltersFromSearchParams,
+  PRICE_FILTER_OPTIONS,
+  writeDestinationFiltersToSearchParams,
+  type DestinationBrowseFilters,
+  type DurationFilterId,
+  type InclusionFilterId,
+  type PriceFilterId,
+} from '../utils/destination-filters.util';
 
 /**
  * Browse and filter curated hospitality experiences.
  */
 export function Destinations() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCountry, setSelectedCountry] = useState<string>('All');
-  const [search, setSearch] = useState('');
-  const [priceId, setPriceId] = useState<(typeof PRICE_OPTIONS)[number]['id']>('all');
-  const [activityId, setActivityId] = useState<(typeof ACTIVITY_OPTIONS)[number]['id']>('all');
-  const [durationId, setDurationId] = useState<(typeof DURATION_OPTIONS)[number]['id']>('all');
-  const [visibleCount, setVisibleCount] = useState(6);
-  const debouncedSearch = useDebounce(search, 300);
+  const resultsRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    const c = searchParams.get('country');
-    if (c && COUNTRIES.includes(c as (typeof COUNTRIES)[number])) {
-      setSelectedCountry(c);
-    }
-  }, [searchParams]);
+  const [search, setSearch] = useState(() => searchParams.get('q') ?? '');
+  const [draftFilters, setDraftFilters] = useState<DestinationBrowseFilters>(() =>
+    parseDestinationFiltersFromSearchParams(searchParams),
+  );
+  const [appliedFilters, setAppliedFilters] = useState<DestinationBrowseFilters>(() =>
+    parseDestinationFiltersFromSearchParams(searchParams),
+  );
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  const debouncedSearch = useDebounce(search, 300);
+  const activeFilterCount = countActiveBrowseFilters(appliedFilters);
+  const hasPendingFilterChanges = JSON.stringify(draftFilters) !== JSON.stringify(appliedFilters);
 
   useEffect(() => {
     setVisibleCount(6);
-  }, [selectedCountry, priceId, activityId, durationId, debouncedSearch]);
+  }, [appliedFilters, debouncedSearch]);
 
-  const setCountry = (country: string): void => {
-    setSelectedCountry(country);
-    const next = new URLSearchParams(searchParams);
-    if (country === 'All') next.delete('country');
-    else next.set('country', country);
+  useEffect(() => {
+    setSearchParams((current) => {
+      const trimmed = debouncedSearch.trim();
+      const existing = current.get('q') ?? '';
+      if (trimmed === existing) return current;
+
+      const next = new URLSearchParams(current);
+      if (trimmed) next.set('q', trimmed);
+      else next.delete('q');
+      return next;
+    }, { replace: true });
+  }, [debouncedSearch, setSearchParams]);
+
+  const updateDraftFilters = (patch: Partial<DestinationBrowseFilters>): void => {
+    setDraftFilters((current) => ({ ...current, ...patch }));
+  };
+
+  const applyFilters = (): void => {
+    setAppliedFilters(draftFilters);
+    const next = writeDestinationFiltersToSearchParams(searchParams, draftFilters);
+    if (debouncedSearch.trim()) next.set('q', debouncedSearch.trim());
+    else next.delete('q');
+    setSearchParams(next, { replace: true });
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const clearBrowseFilters = (): void => {
+    const reset = { ...DEFAULT_DESTINATION_BROWSE_FILTERS };
+    setDraftFilters(reset);
+    setAppliedFilters(reset);
+    const next = writeDestinationFiltersToSearchParams(searchParams, reset);
+    next.delete('q');
+    setSearch('');
     setSearchParams(next, { replace: true });
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ['destinations', selectedCountry],
+    queryKey: ['destinations', appliedFilters.country],
     queryFn: () =>
       destinationsApi
-        .getAll(selectedCountry !== 'All' ? { country: selectedCountry } : undefined)
+        .getAll(appliedFilters.country !== 'All' ? { country: appliedFilters.country } : undefined)
         .then((r) => r.data.data),
   });
 
-  const priceMax = PRICE_OPTIONS.find((p) => p.id === priceId)?.max ?? Infinity;
-  const durationMax = DURATION_OPTIONS.find((d) => d.id === durationId)?.max ?? Infinity;
-
-  const filtered = useMemo(() => {
-    let list: Destination[] = data || [];
-    list = list.filter((d) => d.name.toLowerCase().includes(debouncedSearch.toLowerCase()));
-    if (priceMax !== Infinity) {
-      list = list.filter((d) => Number(d.priceFromNgn) <= priceMax);
-    }
-    list = list.filter((d) => matchesActivity(d, activityId));
-    list = list.filter((d) => matchesDuration(d, durationMax));
-    return list;
-  }, [data, debouncedSearch, priceMax, activityId, durationMax]);
+  const filtered = useMemo(
+    () => filterDestinations(data ?? [], debouncedSearch, appliedFilters),
+    [data, debouncedSearch, appliedFilters],
+  );
 
   const visibleDestinations = filtered.slice(0, visibleCount);
   const canLoadMore = filtered.length > visibleDestinations.length;
+
+  const activeFilterLabels = useMemo(() => {
+    const labels: string[] = [];
+    if (appliedFilters.country !== 'All') labels.push(appliedFilters.country);
+    const price = PRICE_FILTER_OPTIONS.find((entry) => entry.id === appliedFilters.priceId);
+    if (price && price.id !== 'all') labels.push(price.label);
+    const inclusion = INCLUSION_FILTER_OPTIONS.find((entry) => entry.id === appliedFilters.activityId);
+    if (inclusion && inclusion.id !== 'all') labels.push(inclusion.label);
+    const duration = DURATION_FILTER_OPTIONS.find((entry) => entry.id === appliedFilters.durationId);
+    if (duration && duration.id !== 'all') labels.push(duration.label);
+    if (debouncedSearch.trim()) labels.push(`"${debouncedSearch.trim()}"`);
+    return labels;
+  }, [appliedFilters, debouncedSearch]);
 
   return (
     <>
@@ -127,32 +132,36 @@ export function Destinations() {
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-relaxed text-[#45464e]">
               Explore thoughtfully curated experiences across Lagos, Abeokuta, Accra, London, Brighton, Belfast, and more.
-              Browse by destination, budget, or travel style to discover the experience that's right for you.
+              Browse by destination, budget, or travel style to discover the experience that&apos;s right for you.
             </p>
           </div>
 
           <div className="rounded-xl bg-white p-6 shadow-[0_8px_40px_-10px_rgba(27,28,26,0.04)] md:p-8">
             <input
               type="search"
-              placeholder="Search experience name…"
+              placeholder="Search by name, country, or description…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') applyFilters();
+              }}
               className="mb-6 w-full rounded-md border border-[#c5c6cf]/40 bg-[#fbf9f5] px-4 py-3 text-base outline-none focus:border-[#785a00]"
               aria-label="Search experiences"
             />
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-5 lg:items-end">
-              <div className="min-w-[180px]">
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              <div className="min-w-0">
+                <label htmlFor="filter-country" className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
                   Country
                 </label>
                 <div className="relative">
                   <select
-                    value={selectedCountry}
-                    onChange={(e) => setCountry(e.target.value)}
+                    id="filter-country"
+                    value={draftFilters.country}
+                    onChange={(e) => updateDraftFilters({ country: e.target.value })}
                     className="w-full appearance-none border-b border-[#c5c6cf]/30 bg-transparent px-0 py-2 font-display text-lg text-[#041534] outline-none focus:border-[#785a00] focus:ring-0"
                   >
-                    {COUNTRIES.map((country) => (
+                    {DESTINATION_COUNTRIES.map((country) => (
                       <option key={country} value={country}>
                         {country === 'All' ? 'All Countries' : country}
                       </option>
@@ -162,19 +171,20 @@ export function Destinations() {
                 </div>
               </div>
 
-              <div className="min-w-[180px]">
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
+              <div className="min-w-0">
+                <label htmlFor="filter-price" className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
                   Price Range
                 </label>
                 <div className="relative">
                   <select
-                    value={priceId}
-                    onChange={(e) => setPriceId(e.target.value as (typeof PRICE_OPTIONS)[number]['id'])}
+                    id="filter-price"
+                    value={draftFilters.priceId}
+                    onChange={(e) => updateDraftFilters({ priceId: e.target.value as PriceFilterId })}
                     className="w-full appearance-none border-b border-[#c5c6cf]/30 bg-transparent px-0 py-2 font-display text-lg text-[#041534] outline-none focus:border-[#785a00] focus:ring-0"
                   >
-                    {PRICE_OPTIONS.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.label === 'Any price' ? 'Any Budget' : p.label}
+                    {PRICE_FILTER_OPTIONS.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label === 'Any price' ? 'Any Budget' : option.label}
                       </option>
                     ))}
                   </select>
@@ -182,61 +192,94 @@ export function Destinations() {
                 </div>
               </div>
 
-              <div className="min-w-[180px]">
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
+              <div className="min-w-0">
+                <label htmlFor="filter-inclusions" className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
                   Inclusions
                 </label>
                 <div className="relative">
                   <select
-                    value={activityId}
-                    onChange={(e) => setActivityId(e.target.value as (typeof ACTIVITY_OPTIONS)[number]['id'])}
+                    id="filter-inclusions"
+                    value={draftFilters.activityId}
+                    onChange={(e) => updateDraftFilters({ activityId: e.target.value as InclusionFilterId })}
                     className="w-full appearance-none border-b border-[#c5c6cf]/30 bg-transparent px-0 py-2 font-display text-lg text-[#041534] outline-none focus:border-[#785a00] focus:ring-0"
                   >
-                    {ACTIVITY_OPTIONS.map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {a.label === 'Any inclusions' ? 'All Inclusions' : a.label}
+                    {INCLUSION_FILTER_OPTIONS.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.label === 'Any inclusions' ? 'All Inclusions' : option.label}
                       </option>
                     ))}
                   </select>
                   <ChevronDown className="pointer-events-none absolute right-1 top-1/2 size-4 -translate-y-1/2 text-[#75777f]" />
                 </div>
               </div>
+            </div>
 
-              <div className="min-w-[180px]">
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#75777f]">
-                  Duration
-                </label>
+            <div className="mt-6 flex flex-col gap-4 border-t border-[#eae8e4] pt-6 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-[#75777f]">Duration</p>
                 <div className="flex flex-wrap gap-2">
-                  {DURATION_OPTIONS.map((d) => (
+                  {DURATION_FILTER_OPTIONS.map((option) => (
                     <button
-                      key={d.id}
+                      key={option.id}
                       type="button"
-                      onClick={() => setDurationId(d.id)}
+                      onClick={() => updateDraftFilters({ durationId: option.id as DurationFilterId })}
                       className={`rounded-full px-4 py-1.5 text-xs transition-colors ${
-                        durationId === d.id
+                        draftFilters.durationId === option.id
                           ? 'bg-[#041534] text-white'
                           : 'bg-[#eae8e4] text-[#45464e] hover:bg-[#e4e2de]'
                       }`}
                     >
-                      {d.label}
+                      {option.label}
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <Link
-                  to="/get-started"
-                  className="block w-full rounded-lg bg-[#785a00] px-8 py-3 text-center font-sans text-sm uppercase tracking-[0.18em] text-white transition-all hover:brightness-95"
+              <div className="flex flex-wrap gap-3 sm:justify-end">
+                {(activeFilterCount > 0 || debouncedSearch.trim()) && (
+                  <button
+                    type="button"
+                    onClick={clearBrowseFilters}
+                    className="inline-flex items-center gap-2 rounded-lg border border-[#c5c6cf]/50 px-5 py-3 font-sans text-sm uppercase tracking-[0.14em] text-[#45464e] transition-colors hover:border-[#785a00] hover:text-[#041534]"
+                  >
+                    <X size={14} aria-hidden />
+                    Clear
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={applyFilters}
+                  className="rounded-lg bg-[#785a00] px-8 py-3 font-sans text-sm uppercase tracking-[0.18em] text-white transition-all hover:brightness-95"
                 >
-                  Plan my trip
-                </Link>
+                  {hasPendingFilterChanges ? 'Apply filters' : 'Show results'}
+                </button>
               </div>
             </div>
+
+            {activeFilterLabels.length > 0 && (
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#75777f]">Active:</span>
+                {activeFilterLabels.map((label) => (
+                  <span
+                    key={label}
+                    className="rounded-full bg-[#f3f1ec] px-3 py-1 text-xs text-[#45464e]"
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
-        <section className="mx-auto max-w-screen-2xl px-6 md:px-12">
+        <section ref={resultsRef} className="mx-auto max-w-screen-2xl scroll-mt-28 px-6 md:px-12">
+          {!isLoading && (
+            <p className="mb-10 text-sm text-[#75777f]">
+              {filtered.length} {filtered.length === 1 ? 'experience' : 'experiences'}
+              {activeFilterCount > 0 || debouncedSearch.trim() ? ' matching your filters' : ' available'}
+            </p>
+          )}
+
           {isLoading ? (
             <div className="grid grid-cols-1 gap-x-12 gap-y-24 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -246,7 +289,7 @@ export function Destinations() {
           ) : filtered.length > 0 ? (
             <>
               <div className="grid grid-cols-1 gap-x-12 gap-y-24 md:grid-cols-2 lg:grid-cols-3">
-                {visibleDestinations.map((dest, i) => {
+                {visibleDestinations.map((dest: Destination, i) => {
                   const imageUrl = getDestinationHeroImage(dest);
                   return (
                     <article key={dest.id} className={`group ${i % 3 === 1 ? 'md:mt-10' : ''}`}>
@@ -324,6 +367,13 @@ export function Destinations() {
             <div className="py-20 text-center">
               <h3 className="mb-2 font-display text-2xl text-[#041534]">No experiences found</h3>
               <p className="text-[#45464e]">Try adjusting your filters or contact us for a custom itinerary.</p>
+              <button
+                type="button"
+                onClick={clearBrowseFilters}
+                className="mt-6 mr-6 inline-block font-sans text-sm font-semibold uppercase tracking-widest text-[#785a00] underline underline-offset-8"
+              >
+                Clear filters
+              </button>
               <Link
                 to="/contact"
                 className="mt-6 inline-block font-sans text-sm font-semibold uppercase tracking-widest text-[#785a00] underline underline-offset-8"

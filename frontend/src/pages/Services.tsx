@@ -96,7 +96,7 @@ const SERVICE_CONTENT: Record<TabId, ServiceContent> = {
         badge: 'Most Popular',
         featured: true,
         bullets: ['Priority processing', 'Document pickup', '3-5 day turnaround', 'SMS status alerts'],
-        cta: { label: 'Select Premium', href: '/get-started' },
+        cta: { label: 'Select Premium', href: '/contact' },
       },
       {
         name: 'Luxury',
@@ -462,18 +462,18 @@ export function Services() {
               </p>
               <div className="flex flex-col justify-center gap-4 sm:flex-row sm:gap-6">
                 <Link
-                  to="/get-started"
+                  to="/destinations"
                   className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#041534] px-8 py-4 font-sans text-base font-bold text-white transition-all hover:shadow-xl"
                 >
                   Start Your Application
                   <ArrowRight size={18} />
                 </Link>
-                <Link
+                {/* <Link
                   to="/services"
                   className="inline-flex items-center justify-center rounded-lg border border-[#c5c6cf]/40 bg-white px-8 py-4 font-sans text-base font-bold text-[#041534] transition-colors hover:bg-[#eae8e4]"
                 >
                   View All Services
-                </Link>
+                </Link> */}
               </div>
             </div>
           </div>
