@@ -6,7 +6,7 @@ const JOURNEY_STEPS = [
     icon: Compass,
     step: '01',
     title: 'Choose your experience',
-    body: 'Browse curated experiences across Nigeria, Ghana, and the UK — each built around lifestyle, culture, and connection.',
+    body: 'Browse curated experiences across Nigeria, Ghana, the UK and beyond — each built around lifestyle, culture, and connection.',
     href: '/destinations',
     cta: 'Explore experiences',
   },
@@ -15,7 +15,7 @@ const JOURNEY_STEPS = [
     step: '02',
     title: 'Customize your package',
     body: 'Pick your destination bundle, adjust optional add-ons, and reserve with transparent pricing before you commit.',
-    href: '/get-started',
+    href: '/get-destinations',
     cta: 'Start planning',
   },
   {
@@ -23,7 +23,7 @@ const JOURNEY_STEPS = [
     step: '03',
     title: 'Show up and enjoy',
     body: 'Your concierge handles transfers, timing, and details — you focus on the experience, not the logistics.',
-    href: '/get-started',
+    href: '/get-destinations',
     cta: 'Book your trip',
   },
 ] as const;
@@ -40,10 +40,10 @@ export function HowItWorks() {
             Your journey
           </span>
           <h2 className="mt-4 font-display text-4xl text-[#1b1c1a] md:text-5xl">
-            From curiosity to <span className="italic text-[#785a00]">confirmed</span>
+            From Browsing to <span className="italic text-[#785a00]">Booked</span>
           </h2>
           <p className="mt-6 font-sans text-lg leading-relaxed text-[#45464e]">
-            A clear path designed to remove friction — so you can move from browsing to booking with confidence.
+           Every step is thoughtfully designed to make planning and booking effortless.
           </p>
         </div>
 

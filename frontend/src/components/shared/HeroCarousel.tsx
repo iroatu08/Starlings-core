@@ -12,7 +12,7 @@ const HERO_SLIDES = [
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1539650116574-75c0c570d860?w=1920&h=1080&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=1920&h=1080&fit=crop&q=80',
     alt: 'Travelers exploring a vibrant coastal city',
     width: 1920,
     height: 1080,

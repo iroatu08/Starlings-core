@@ -86,7 +86,7 @@ export function Home() {
                 Curated Experiences
               </span>
               <h2 className="mt-4 font-display text-4xl text-[#1b1c1a] md:text-6xl">
-                Live the destination
+                Live Every Destination
               </h2>
               <p className="mt-6 font-sans text-lg leading-relaxed text-[#45464e]">
                 Thoughtfully curated experiences across Abeokuta, Lagos, Accra, Belfast, Brighton, London, 
@@ -169,10 +169,10 @@ export function Home() {
         <div className="mx-auto grid max-w-screen-2xl grid-cols-1 items-center gap-16 lg:grid-cols-2 lg:gap-24">
           <div>
             <span className="font-sans text-sm font-medium uppercase tracking-widest text-[#785a00]">
-              Our advantage
+           Why Travelers Choose Starlings
             </span>
             <h2 className="mt-6 font-display text-5xl leading-tight text-[#1b1c1a] md:text-7xl">
-              Travel should feel effortless <span className="italic text-[#785a00]">Starlings</span>
+              Travel should feel effortless <span className="italic text-[#785a00]">Effortless</span>
             </h2>
             <p className="mt-8 max-w-lg font-sans text-lg leading-relaxed text-[#45464e]">
             From the moment you start planning until you’re safely back home, we thoughtfully
