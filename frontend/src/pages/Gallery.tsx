@@ -5,7 +5,8 @@ import { galleryApi } from '../api/gallery.api'
 import { destinationsApi } from '../api/destinations.api'
 import { Lightbox } from '../components/shared/Lightbox'
 
-const PAGE_SIZE = 16
+/** Images fetched per page — large enough that a typical viewport still gets an early load-more. */
+const PAGE_SIZE = 24
 
 function GalleryImageTile({
   url,
@@ -26,10 +27,10 @@ function GalleryImageTile({
     <button
       type="button"
       onClick={onClick}
-      className="group relative mb-6 w-full break-inside-avoid overflow-hidden rounded-xl bg-white text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-[#785a00]"
+      className="group relative mb-6 w-full break-inside-avoid overflow-hidden rounded-xl border border-brand-outline bg-brand-white text-left shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-teal"
     >
-      <div className="relative bg-[#f5f3ef]">
-        {!loaded && <div className="aspect-[4/3] shimmer-bg w-full" aria-hidden />}
+      <div className="relative bg-brand-surface">
+        {!loaded && <div className="aspect-[4/3] w-full shimmer-bg" aria-hidden />}
         <img
           src={`${url}${url.includes('?') ? '&' : '?'}w=600&q=70`}
           alt={alt}
@@ -45,9 +46,9 @@ function GalleryImageTile({
       </div>
 
       {(country || title) && (
-        <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#041534]/80 via-transparent to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+        <div className="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-brand-teal/80 via-transparent to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
           {country && (
-            <span className="mb-2 font-sans text-xs font-bold uppercase tracking-[0.22em] text-[#ffdf9a]">
+            <span className="mb-2 font-sans text-xs font-bold uppercase tracking-[0.22em] text-brand-sky">
               {country}
             </span>
           )}
@@ -58,6 +59,9 @@ function GalleryImageTile({
   )
 }
 
+/**
+ * Public travel gallery with infinite scroll over all uploaded images.
+ */
 export function Gallery() {
   const [selectedCountry, setSelectedCountry] = useState<string>('all')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
@@ -74,8 +78,9 @@ export function Gallery() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isError,
   } = useInfiniteQuery({
-    queryKey: ['gallery-pages', 'all'],
+    queryKey: ['gallery-pages', 'all', PAGE_SIZE],
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       galleryApi
@@ -103,21 +108,35 @@ export function Gallery() {
   }, [flatImages, selectedCountry])
 
   const loadMore = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+    if (hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage()
+    }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
+  // Re-bind observer whenever the sentinel mounts after loading (was missing previously).
   useEffect(() => {
     const el = sentinelRef.current
-    if (!el) return
-    const obs = new IntersectionObserver(
+    if (!el || isLoading) return
+
+    const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) loadMore()
       },
-      { rootMargin: '200px' }
+      { rootMargin: '400px' },
     )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [loadMore])
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [loadMore, isLoading, filteredImages.length])
+
+  // If the first page is short enough that the sentinel never scrolls into view, still keep fetching.
+  useEffect(() => {
+    if (isLoading || isFetchingNextPage || !hasNextPage) return
+    const el = sentinelRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const nearViewport = rect.top < window.innerHeight + 400
+    if (nearViewport) loadMore()
+  }, [isLoading, isFetchingNextPage, hasNextPage, filteredImages.length, loadMore])
 
   return (
     <>
@@ -126,16 +145,16 @@ export function Gallery() {
         description="See the experience — lifestyle moments from curated travel across Nigeria, Ghana, and the UK."
       />
 
-      <main className="bg-[#fbf9f5] pb-24 pt-32">
+      <main className="bg-brand-surface pb-24 pt-32">
         <section className="mx-auto mb-12 max-w-screen-2xl px-6 md:mb-16 md:px-12">
           <div className="max-w-3xl">
-            <span className="mb-4 block font-sans text-sm font-bold uppercase tracking-[0.2em] text-[#785a00]">
+            <span className="mb-4 block font-sans text-sm font-bold uppercase tracking-[0.2em] text-brand-teal">
               TRAVEL GALLERY
             </span>
-            <h1 className="mb-8 font-display text-5xl leading-tight tracking-tight text-[#041534] md:text-7xl">
+            <h1 className="mb-8 font-display text-5xl leading-tight tracking-tight text-brand-black md:text-7xl">
               See the Experience
             </h1>
-            <p className="max-w-xl font-sans text-lg leading-relaxed text-[#45464e]">
+            <p className="max-w-xl font-sans text-lg leading-relaxed text-brand-muted">
               Lifestyle moments from our curated experiences across Nigeria, Ghana, and the UK.
             </p>
           </div>
@@ -151,8 +170,8 @@ export function Gallery() {
               onClick={() => setSelectedCountry('all')}
               className={`rounded-full px-6 py-2.5 font-sans text-sm font-medium transition-colors ${
                 selectedCountry === 'all'
-                  ? 'bg-[#041534] text-white'
-                  : 'bg-[#eae8e4] text-[#45464e] hover:bg-[#e4e2de]'
+                  ? 'bg-brand-teal text-white'
+                  : 'bg-brand-surface-low text-brand-muted hover:bg-brand-outline'
               }`}
             >
               All Collections
@@ -164,8 +183,8 @@ export function Gallery() {
                 onClick={() => setSelectedCountry(country)}
                 className={`rounded-full px-6 py-2.5 font-sans text-sm font-medium transition-colors ${
                   selectedCountry === country
-                    ? 'bg-[#041534] text-white'
-                    : 'bg-[#eae8e4] text-[#45464e] hover:bg-[#e4e2de]'
+                    ? 'bg-brand-teal text-white'
+                    : 'bg-brand-surface-low text-brand-muted hover:bg-brand-outline'
                 }`}
               >
                 {country}
@@ -181,8 +200,12 @@ export function Gallery() {
                 <div key={i} className="mb-6 h-56 break-inside-avoid rounded-xl shimmer-bg" />
               ))}
             </div>
+          ) : isError ? (
+            <p className="py-16 text-center font-sans text-brand-red">
+              Could not load gallery images. Please try again.
+            </p>
           ) : filteredImages.length === 0 ? (
-            <p className="py-16 text-center font-sans text-[#041534]">No gallery images yet.</p>
+            <p className="py-16 text-center font-sans text-brand-black">No gallery images yet.</p>
           ) : (
             <>
               <div className="columns-1 gap-6 md:columns-2 lg:columns-3">
@@ -197,9 +220,30 @@ export function Gallery() {
                   />
                 ))}
               </div>
-              <div ref={sentinelRef} className="h-8 w-full" />
+
+              <div ref={sentinelRef} className="h-8 w-full" aria-hidden />
+
               {isFetchingNextPage && (
-                <p className="py-4 text-center font-sans text-sm text-[#041534]">Loading more…</p>
+                <p className="py-4 text-center font-sans text-sm text-brand-muted">Loading more…</p>
+              )}
+
+              {hasNextPage && !isFetchingNextPage && (
+                <div className="mt-6 text-center">
+                  <button
+                    type="button"
+                    onClick={loadMore}
+                    className="rounded-lg bg-brand-teal px-8 py-3 font-sans text-sm font-bold uppercase tracking-widest text-white transition-colors hover:bg-brand-teal-dark"
+                  >
+                    Load more
+                  </button>
+                </div>
+              )}
+
+              {!hasNextPage && flatImages.length > 0 && (
+                <p className="mt-8 text-center font-sans text-xs uppercase tracking-widest text-brand-muted">
+                  Showing all {filteredImages.length} images
+                  {selectedCountry !== 'all' ? ` in ${selectedCountry}` : ''}
+                </p>
               )}
             </>
           )}
