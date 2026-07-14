@@ -20,8 +20,10 @@ export class GalleryService {
   }
 
   async findAll(destinationId?: string, page = 1, limit = 30) {
-    const safeLimit = Math.min(Math.max(limit, 1), 60);
-    const safePage = Math.max(page, 1);
+    const parsedLimit = Number(limit);
+    const parsedPage = Number(page);
+    const safeLimit = Math.min(Math.max(Number.isFinite(parsedLimit) ? parsedLimit : 30, 1), 60);
+    const safePage = Math.max(Number.isFinite(parsedPage) ? parsedPage : 1, 1);
     const qb = this.repo.createQueryBuilder('img').leftJoinAndSelect('img.destination', 'dest');
     if (destinationId) qb.andWhere('img.destinationId = :destinationId', { destinationId });
     qb.orderBy('img.createdAt', 'DESC');
